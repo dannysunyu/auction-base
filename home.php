@@ -23,12 +23,17 @@ body {padding-top: 60px;}
 						<li class="nav-header">
 							Categories
 						</li>
-						<li>
-							Test category 1
-						</li>
-						<li>
-							Test category 2
-						</li>
+						<?php
+						$query = "select distinct category from Category";
+						try {
+							$result = $db->query($query);
+							while ($row = $result->fetch()) {
+								echo "<li>" . htmlspecialchars($row["category"]) . "</li>";
+							}
+						} catch (PDOException $e) {
+							echo "Item query failed: " . $e->getMessage();
+						}
+						?>
 					</ul>
 				</div>
 			</div>
@@ -56,21 +61,32 @@ body {padding-top: 60px;}
 				  ?>
 				  </form>
 				<table class="table table-striped">
+					<thead>
+							<tr>
+								<th>Name</th>
+								<th>Open/Closed</th>
+								<th>Winner</th>
+								<th>Category</th>
+							</tr>
+					</thead>
 					<?php
-					$query = "select name from Item";
+					$query = "select name, date(ends) as date_ends from Item";
 					try {
 						$result = $db->query($query);
+						$currenttime = $db->query("select date('currenttime') from Time")->fetch();
 						while ($row = $result->fetch()) {
-							echo "<tr><td>" . htmlspecialchars($row["name"]) . "</td></tr>";
+							echo "<tr><td>" . htmlspecialchars($row["name"]) . "</td><td>";
+							if ($row["date_ends"] < $currenttime) {
+								echo "Closed";
+							} else {
+								echo "Open";
+							}
+							echo "</td><td>the winner</td><td>the category</td></tr>";
 						}
 					} catch (PDOException $e) {
 						echo "Item query failed: " . $e->getMessage();
 					}
 					?>
-						<tr><td>New York</td></tr>
-						<tr><td>Twitter</td></tr>
-						<tr><td>Sigona's</td></tr>
-						<tr><td>Fall Quarter</td></tr>
 				</table>
 			</div>
 		</div>

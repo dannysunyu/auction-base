@@ -1,3 +1,7 @@
+<?php
+include ('./sqlitedb.php');
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,7 +33,6 @@ body {padding-top: 60px;}
 				</div>
 			</div>
 			<div class="span9">
-				<center>
 				<h3> Select a Time </h3> 
 
 				  <?php
@@ -46,15 +49,29 @@ body {padding-top: 60px;}
 				      echo "<center> (Hello, ".$entername.". Previously selected time was: ".$selectedtime.".)</center>";
 				    }
 				    echo "<br/>";
-				    echo "<center>Please select a new time:</center>";
 				  ?>
-				  <form method="POST" action="selecttime.php">
+				  <form class="well form-inline" method="POST" action="selecttime.php">
 				  <?php 
-				    include ('./timetable.html');
+				    include ('./filter_form.html');
 				  ?>
 				  </form>
-
-				</center>
+				<table class="table table-striped">
+					<?php
+					$query = "select name from Item";
+					try {
+						$result = $db->query($query);
+						while ($row = $result->fetch()) {
+							echo "<tr><td>" . htmlspecialchars($row["name"]) . "</td></tr>";
+						}
+					} catch (PDOException $e) {
+						echo "Item query failed: " . $e->getMessage();
+					}
+					?>
+						<tr><td>New York</td></tr>
+						<tr><td>Twitter</td></tr>
+						<tr><td>Sigona's</td></tr>
+						<tr><td>Fall Quarter</td></tr>
+				</table>
 			</div>
 		</div>
 	</div>

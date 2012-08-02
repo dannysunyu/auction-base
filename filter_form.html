@@ -1,9 +1,9 @@
 <table>
     <tr>
         <td>
-<p align="center">
+<p>
 Month:
-<select size="1" name="MM">
+<select class="input-small" size="1" name="MM">
     <option selected value="01">Jan</option>
     <option value="02">Feb</option>
     <option value="03">Mar</option>
@@ -18,7 +18,7 @@ Month:
     <option value="12">Dec</option>
 </select>
 Day:
-<select size="1" name="dd">
+<select class="input-small" size="1" name="dd">
     <option selected>01</option>
     <option>02</option>
     <option>03</option>
@@ -52,7 +52,7 @@ Day:
     <option>31</option>
 </select>
 Year:
-<select size="1" name="yyyy">
+<select class="input-small" size="1" name="yyyy">
     <option>1999</option>
     <option>2000</option>
     <option selected>2001</option>
@@ -61,10 +61,11 @@ Year:
     <option>2004</option>
     <option>2005</option>
     <option>2006</option>
-</select></p>
-<p align="center">
+</select>
+</p>
+<p>
 Hour: 
-<select size="1" name="HH">
+<select class="input-small" size="1" name="HH">
     <option>00</option>
     <option>01</option>
     <option>02</option>
@@ -91,7 +92,7 @@ Hour:
     <option>23</option>
 </select>
 Minute:
-<select size="1" name="mm">
+<select class="input-small" size="1" name="mm">
     <option selected>00</option>
     <option>01</option>
     <option>02</option>
@@ -154,7 +155,7 @@ Minute:
     <option>59</option>
 </select>
 Second: 
-<select size="1" name="ss">
+<select class="input-small" size="1" name="ss">
     <option selected>00</option>
     <option>01</option>
     <option>02</option>
@@ -217,8 +218,37 @@ Second:
     <option>59</option>
 </select>
 </p>
-<p align="center">Please enter your name: <input type="text" name="entername" value="Dr. Clock"></p>
-<p align="center"><input type="submit" value="Select Time"></p>
+<p>Please enter your name: <input type="text" name="entername" value="Dr. Clock"></p>
+
+<div class="controls">
+<span class="input-prepend input-append">
+  <span class="add-on">$</span><input id="appendedPrependedInputMax" class="span2" type="text" size="80"
+  placeholder="Max Price"></input><span class="add-on">.00</span>
+</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span class="input-prepend input-append">
+  <span class="add-on">$</span><input id="appendedPrependedInputMin" class="span2" type="text" size="80"
+  placeholder="Min Price"></input><span class="add-on">.00</span>
+</span>
+</div>
+
+<br/>
+
+<div class="controls">
+<label class="radio">
+  <input id="optionsRadios1" type="radio" checked="" value="option1"
+	 name="optionsRadios">
+  Open
+  </label>
+<br/>
+<label class="radio">
+  <input id="optionsRadios2" type="radio" checked="" value="option2"
+	 name="optionsRadios">
+  Closed
+</label>
+</div>
+<br/>
+<p><input type="submit" class="btn" value="Submit"></p>
         </td>
     </tr>
 </table>

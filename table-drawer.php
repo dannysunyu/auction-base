@@ -4,6 +4,7 @@
      <th>Name</th>
      <th>Open/Closed</th>
 	 <th>Current Price</th>
+	 <th>Number of Bids</th>
      <th>Winner</th>
      <th>Category</th>
   </tr>
@@ -119,19 +120,27 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
  
  try {
       $result = $db->query($query);
-      $currenttime = $db->query("select date('currenttime') from Time")->fetch();
       while ($row = $result->fetch()) {
           echo "<tr><td>" . $row["itemID"];
            echo "</td><td>" . htmlspecialchars($row["name"]) . "</td><td>";
-           $closed = strtotime($row["date_ends"]) < strtotime(date($selectedtime));
+           $closed = strtotime($row["date_ends"]) < strtotime(date($selectedTime));
 		   echo ($closed ? "Closed on " : "Will close on ") . $row["date_ends"];
 		   echo "</td><td>" . money_format('$%i', floatval($row["currently"])) . "</td><td>";
+		   try {
+			   $numBidsQuery = "select count(time) as numBids from Bid where itemID =".$row["itemID"]." and time < '".$selectedTime."';";
+			   $numBidsResult = $db->query($numBidsQuery);
+			   $numBidsRow = $numBidsResult->fetch();
+			   $numBids = $numBidsRow["numBids"];
+			   echo "".$numBids."</td><td>";	
+		   } catch (PDOException $e) {
+		   	   echo "Num Bids query failed: " . $e->getMessage();
+		   }
 		   if ($closed) {
 			   $winnerQuery = "select distinct bidderID from Bid NATURAL JOIN Bidder where itemID=" . $row["itemID"] . 
 				   " and amount = (select max(amount) from Bid where itemID=".$row["itemID"].");";
 			   try {
 				   $winnerResult = $db->query($winnerQuery);
-				   $winnerRow = $winner_result->fetch();
+				   $winnerRow = $winnerResult->fetch();
 				   $winner = $winnerRow["bidderID"];
 				   if (strlen($winner) > 0)
 						echo $winner ."</td><td>";

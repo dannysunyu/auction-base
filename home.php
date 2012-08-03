@@ -4,6 +4,7 @@
 <meta content="text/html" charset="UTF-8"/>
 <title>AuctionBase</title>
 <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css"/>
+<link rel="stylesheet" type="text/css" href="css/home.css"/>
 <style type="text/css">	body {padding-top: 60px;} </style>
 </head>
 <body>

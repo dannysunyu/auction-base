@@ -35,20 +35,23 @@ include ('./sqlitedb.php');
 </script>
 
 <?php
-function drawBidButton() {
+function loadModalBody($bidItemID) {
+	echo '<p> hey </p>';
+}
+
+function drawBidButton($bidItemID, $bidItemName) {
 	echo
-	'<a class="btn" data-toggle="modal" href="#myModal" >Bid</a>
-    <div class="modal fade hide" id="myModal">
+	'<a class="btn" data-toggle="modal" href="#bid-modal">Bid</a>
+    <div class="modal fade hide" id="bid-modal">
 	    <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">×</button>
-		    <h3>Modal header</h3>
+		    <h3>'.$bidItemName.'</h3>
 		</div>
-		<div class="modal-body">
-		    <p>One fine body…</p>
+		<div class="modal-body" id="bid-modal-body">
 		</div>
 		<div class="modal-footer">
-		    <a href="#" class="btn" data-dismiss="modal">Close</a>
-		    <a href="#" class="btn btn-primary">Save changes</a>
+		    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+		    <a href="#" class="btn btn-primary">Bid</a>
 	    </div>
     </div>';
 }
@@ -136,7 +139,8 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 				        echo "Winner query failed: " . $e->getMessage();
 				}
 		   } else {
-			   drawBidButton();
+			   $bidArray = array();			   
+			   drawBidButton($row["itemID"], $row["name"]);
 			   echo "</td><td>";
 		   }
            $categoryQuery = "select distinct category from Category where itemID = " . $row["itemID"];

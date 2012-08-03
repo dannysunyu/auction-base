@@ -102,11 +102,12 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
  	{
  	     if (is_array($entry)) {
  	        foreach($entry as $value)
-    			 $HTML .= $key .": " . $value . "<br/>";
+    			 $HTML .= $key .": " . $value . ", ";
  	     } else {
- 			 $HTML .= $key .": " . $entry . "<br/>";
+ 			 $HTML .= $key .": " . $entry . ", ";
  	     }
  	}
+	$HTML = substr($HTML, 0, -2);
  	$HTML .= '</div>';
  	echo "<script type='text/javascript'> $('#query-info').append('".$HTML."')</script>";
 

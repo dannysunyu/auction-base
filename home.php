@@ -64,7 +64,7 @@
 
 	$('#filter-form').submit(function() {
 		var data = $(this).serializeArray();
-		$('#items-table').load("drawer.php", data);
+		$('#items-table').load("table-drawer.php", data);
 		return false;
 	});
 

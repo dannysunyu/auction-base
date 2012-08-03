@@ -9,7 +9,6 @@
   </tr>
 </thead>
 
-
 <?php
 include ('./sqlitedb.php');	
 ?>
@@ -34,20 +33,23 @@ include ('./sqlitedb.php');
 	$("#query-info").children().remove()
 </script>
 
-<?php
-function loadModalBody($bidItemID) {
-	echo '<p> hey </p>';
+<script type="text/javascript">
+function loadModalBody(bidItemID) {
+	alert('I work! The item ID is ' + bidItemID);
+	$('#bid-' + bidItemID + '-modal-body').load('bid-modal-body.php', { "first" : "1", "second" : "2"});
 }
+</script>
 
+<?php
 function drawBidButton($bidItemID, $bidItemName) {
 	echo
-	'<a class="btn" data-toggle="modal" href="#bid-modal">Bid</a>
-    <div class="modal fade hide" id="bid-modal">
+	'<a class="btn" data-toggle="modal" href="#bid-modal-'.$bidItemID.'" onclick="loadModalBody('.$bidItemID.')">Bid</a>
+    <div class="modal fade hide" id="bid-modal-'.$bidItemID.'">
 	    <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">×</button>
-		    <h3>'.$bidItemName.'</h3>
+		    <h3>'.$bidItemName. $bidItemID.'</h3>
 		</div>
-		<div class="modal-body" id="bid-modal-body">
+		<div class="modal-body" id="bid-'.$bidItemID.'-modal-body">
 		</div>
 		<div class="modal-footer">
 		    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
@@ -139,7 +141,7 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 				        echo "Winner query failed: " . $e->getMessage();
 				}
 		   } else {
-			   $bidArray = array();			   
+			   $bidArray = array();	
 			   drawBidButton($row["itemID"], $row["name"]);
 			   echo "</td><td>";
 		   }

@@ -16,7 +16,7 @@ body {padding-top: 60px;}
 	?>
 	<div class="container">
 		<div class="row-fluid">
-			<div class="span3">
+			<div class="span2">
 				<div class="well" style="padding: 8px 0;">
 					<ul class="nav nav-list">
 						<li class="nav-header">
@@ -29,7 +29,7 @@ body {padding-top: 60px;}
 					</ul>
 				</div>
 			</div>
-			<div class="span9">
+			<div class="span10">
 				  <?php
 				    $MM = $_POST["MM"];
 				    $dd = $_POST["dd"];

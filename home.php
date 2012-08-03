@@ -41,16 +41,16 @@ body {padding-top: 60px;}
     
 				    if($_POST["MM"]) {
 				      $selectedtime = $yyyy."-".$MM."-".$dd." ".$HH.":".$mm.":".$ss;
-				      echo "<center> (Hello, ".$user.". Previously selected time was: ".$selectedtime.".)</center>";
 				    }
 				    echo "<br/>";
 				  ?>
+				  <h2>Filter your search</h2><br/>
 				  <form class="well form-inline" id="filter-form" action="#" method="GET">
 				                       <?php
 				                         include ('./filter_form.php');
 				                       ?>
 				                       </form>
-				  
+				 <div id="query-info"></div>
 				<table class="table table-striped" id="items-table"></table>
 			</div>
 		</div>
@@ -60,6 +60,8 @@ body {padding-top: 60px;}
 
 
 <script type="text/javascript" src="jquery-1.7.2.min.js"></script>
+<script src="bootstrap/js/bootstrap-modal.js"></script>
+<script src="bootstrap/js/bootstrap-transition.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
 //	drawItems("2001-12-22 00:00:01", "Rose", "Boats", 900, 300, 738934008);
@@ -70,6 +72,7 @@ $(document).ready(function() {
 $('#filter-form').submit(function() {
 	var data = $(this).serializeArray();
 	$('#items-table').load("drawer.php", data);
+	$('#query-info').load("query-info.php", data);
 	return false;
 });
 

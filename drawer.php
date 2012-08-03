@@ -1,33 +1,22 @@
 <?php
 include ('./sqlitedb.php');	
-
-foreach ($_POST as $key => $entry)
-{
-     if (is_array($entry)) {
-        foreach($entry as $value)
-           print $key . ": " . $value . "<br>";
-     } else {
-        print $key . ": " . $entry . "<br>";
-     }
-}
-
-$MM = $_POST["MM"];
-$dd = $_POST["dd"];
-$yyyy = $_POST["yyyy"];
-$HH = $_POST["HH"];
-$mm = $_POST["mm"];
-$ss = $_POST["ss"];    
-$user = htmlspecialchars($_POST["user"]);
-$maxPrice = intval($_POST["maxPrice"]);
-$minPrice = intval($_POST["minPrice"]);
-$openOrClosed = $_POST["openOrClosed"];
-$itemID = intval($_POST["itemID"]);
-$category = $_POST["category"];
-$selectedtime = $yyyy."-".$MM."-".$dd." ".$HH.":".$mm.":".$ss;
-echo "<center> (Hello, ".$user.". Previously selected time was: ".$selectedtime.".)</center>";
-
 ?>
 
+<?php
+	$MM = $_POST["MM"];
+	$dd = $_POST["dd"];
+	$yyyy = $_POST["yyyy"];
+	$HH = $_POST["HH"];
+	$mm = $_POST["mm"];
+	$ss = $_POST["ss"];    
+	$user = htmlspecialchars($_POST["user"]);
+	$maxPrice = intval($_POST["maxPrice"]);
+	$minPrice = intval($_POST["minPrice"]);
+	$openOrClosed = $_POST["openOrClosed"];
+	$itemID = intval($_POST["itemID"]);
+	$category = $_POST["category"];
+	$selectedtime = $yyyy."-".$MM."-".$dd." ".$HH.":".$mm.":".$ss;
+?>
 <thead>
   <tr>
 	 <th>Item ID</th>
@@ -38,6 +27,28 @@ echo "<center> (Hello, ".$user.". Previously selected time was: ".$selectedtime.
      <th>Category</th>
   </tr>
 </thead>
+
+<?php
+function drawBidButton() {
+	echo
+	'<a class="btn" data-toggle="modal" href="#myModal" >Bid</a>
+    <div class="modal fade hide" id="myModal">
+	    <div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal">×</button>
+		    <h3>Modal header</h3>
+		</div>
+		<div class="modal-body">
+		    <p>One fine body…</p>
+		</div>
+		<div class="modal-footer">
+		    <a href="#" class="btn" data-dismiss="modal">Close</a>
+		    <a href="#" class="btn btn-primary">Save changes</a>
+	    </div>
+    </div>';
+}
+
+	
+?>
 
 <?php
 function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFirstCondition)
@@ -51,7 +62,7 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 	$isFirstCondition = False;
 }
 
- $query = "select distinct itemID, name, date(ends) as date_ends from Item";
+ $query = "select distinct itemID, name, currently, date(ends) as date_ends from Item";
  $isFirstCondition = True;
  $needsAnd = False;
  $conditions = array();
@@ -76,20 +87,21 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
  }
  
  $condition = $condition . ";";
- echo "<p>" . $query . $condition . "</p>";
+ $query = $query . $condition;
  try {
-      $result = $db->query($query . $condition);
+      $result = $db->query($query);
       $currenttime = $db->query("select date('currenttime') from Time")->fetch();
       while ($row = $result->fetch()) {
           echo "<tr><td>" . $row["itemID"];
            echo "</td><td>" . htmlspecialchars($row["name"]) . "</td><td>";
-           if ($row["date_ends"] < $currenttime) {
-                echo "Closed";
-           } else {
-                echo "Open";
-           }
-		   echo "</td><td>" . $row["currently"] . "</td><td>";
-           echo "</td><td>winner</td><td>";
+           $closed = strtotime($row["date_ends"]) < date($selectedtime);
+		   echo ($closed ? "Closed" : "Open");
+		   echo "</td><td>" . money_format('$%i', floatval($row["currently"])) . "</td><td>";
+		   if ($closed) {
+			   echo "</td><td>winner</td><td>";
+		   } else {
+			   drawBidButton();
+		   }
            $category_query = "select distinct category from Category where itemID = "
  . $itemID;
            $categories =

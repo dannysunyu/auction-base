@@ -1,3 +1,15 @@
+<thead>
+  <tr>
+	 <th>Item ID</th>
+     <th>Name</th>
+     <th>Open/Closed</th>
+	 <th>Current Price</th>
+     <th>Winner</th>
+     <th>Category</th>
+  </tr>
+</thead>
+
+
 <?php
 include ('./sqlitedb.php');	
 ?>
@@ -17,16 +29,21 @@ include ('./sqlitedb.php');
 	$selectedCategory = $_POST["category"];
 	$selectedTime = $yyyy."-".$MM."-".$dd." ".$HH.":".$mm.":".$ss;
 ?>
-<thead>
-  <tr>
-	 <th>Item ID</th>
-     <th>Name</th>
-     <th>Open/Closed</th>
-	 <th>Current Price</th>
-     <th>Winner</th>
-     <th>Category</th>
-  </tr>
-</thead>
+
+<?php
+	$HTML = '<h3>Parameters</h3><div class="well">';
+	foreach ($_POST as $key => $entry)
+	{
+	     if (is_array($entry)) {
+	        foreach($entry as $value)
+   			 $HTML .= $key .": " . $value . "<br/>";
+	     } else {
+			 $HTML .= $key .": " . $entry . "<br/>";
+	     }
+	}
+	$HTML .= '</div>';
+	echo "<script type='text/javascript'> $('#query-info').append('".$HTML."')</script>";
+?>
 
 <?php
 function drawBidButton() {
@@ -46,18 +63,16 @@ function drawBidButton() {
 	    </div>
     </div>';
 }
-
-	
 ?>
 
 <?php
 function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFirstCondition)
 {
 	if ($isFirstCondition)
-		$oldCondition = $oldCondition . " where ";
+		$oldCondition .= " where ";
 	if ($needsAnd)
-		 $oldCondition = $oldCondition . " and ";
-	$oldCondition = $oldCondition . $newConditionFragment;
+		 $oldCondition .= " and ";
+	$oldCondition .= $newConditionFragment;
 	$needsAnd = True;
 	$isFirstCondition = False;
 }
@@ -76,19 +91,21 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 	 if ($minPrice > 0)
 		 $conditions[] = "Item.currently >= " . $minPrice;
 	 if ($openOrClosed == "open") {
-		 $conditions[] = "date_ends > date('" + $selectedtime + "')";
-	 } else if ($openOrClosed == "closed") {
-		 $conditions[] = "date_ends > date('" + $selectedtime + "')";
+		 echo '<script type="text/javascript">alert("'. $selectedTime .'")</script>';
+		 $conditions[] = "date_ends > date('" . $selectedTime . "')";
 	 }
+	 else if ($openOrClosed == "closed") 
+		 $conditions[] = "date_ends > date('" . $selectedTime . "')";
  }
  
  foreach($conditions as $conditionFragment) {
 	 addCondition($condition, $conditionFragment, $needsAnd, $isFirstCondition);
  }
  
+ $condition .= ";";
+ $query .= $condition;
  
- $condition = $condition . ";";
- $query = $query . $condition;
+ echo "<script type='text/javascript'> $('#query-info').append('<h3>Query</h3><div class=\"well\">". $query . "</div>')</script>";
  try {
       $result = $db->query($query);
       $currenttime = $db->query("select date('currenttime') from Time")->fetch();
@@ -118,9 +135,11 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 		   }
            $categoryQuery = "select distinct category from Category where itemID = " . $row["itemID"];
            $categories = $db->query($categoryQuery);
+		   $firstCategory = True;
            while ($categoryRow = $categories->fetch()) {
+			   
                 echo "<p>" . $categoryRow["category"] . "</p>";
-				//echo "<p>category here.</p>";
+				$firstCategory = False;
            }
            echo "</td></tr>";
       }

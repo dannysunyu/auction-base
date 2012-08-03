@@ -13,6 +13,7 @@
 	?>
 	<div class="container">
 		<div class="row-fluid">
+			<!--
 			<div class="span2">
 				<div class="well" style="padding: 8px 0;">
 					<ul class="nav nav-list">
@@ -26,7 +27,8 @@
 					</ul>
 				</div>
 			</div>
-			<div class="span10">
+			-->
+			<div class="span12">
 				  <?php
 				    $MM = $_POST["MM"];
 				    $dd = $_POST["dd"];
@@ -63,7 +65,6 @@
 	$('#filter-form').submit(function() {
 		var data = $(this).serializeArray();
 		$('#items-table').load("drawer.php", data);
-		$('#query-info').load("query-info.php", data);
 		return false;
 	});
 

@@ -1,10 +1,8 @@
-<?php
-include ('./sqlitedb.php');
-?>
-
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en">
 <head>
+<meta charset="UTF-8">
 <title>AuctionBase</title>
 <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css"/>
 </head>
@@ -14,6 +12,7 @@ body {padding-top: 60px;}
 <body>
 	<?php 
 	  include ('./navbar.html');
+	  include ('./sqlitedb.php');	
 	?>
 	<div class="container">
 		<div class="row-fluid">
@@ -21,25 +20,16 @@ body {padding-top: 60px;}
 				<div class="well" style="padding: 8px 0;">
 					<ul class="nav nav-list">
 						<li class="nav-header">
-							Categories
+							I'm a sidebar.
 						</li>
 						<?php
-						$query = "select distinct category from Category";
-						try {
-							$result = $db->query($query);
-							while ($row = $result->fetch()) {
-								echo "<li>" . htmlspecialchars($row["category"]) . "</li>";
-							}
-						} catch (PDOException $e) {
-							echo "Item query failed: " . $e->getMessage();
-						}
+						for ($i = 0; $i < 30; $i+=1)
+							echo ("<li>hey " . $i . "</li>");
 						?>
 					</ul>
 				</div>
 			</div>
 			<div class="span9">
-				<h3> Select a Time </h3> 
-
 				  <?php
 				    $MM = $_POST["MM"];
 				    $dd = $_POST["dd"];
@@ -47,49 +37,46 @@ body {padding-top: 60px;}
 				    $HH = $_POST["HH"];
 				    $mm = $_POST["mm"];
 				    $ss = $_POST["ss"];    
-				    $entername = htmlspecialchars($_POST["entername"]);
+				    $user = htmlspecialchars($_POST["user"]);
     
 				    if($_POST["MM"]) {
 				      $selectedtime = $yyyy."-".$MM."-".$dd." ".$HH.":".$mm.":".$ss;
-				      echo "<center> (Hello, ".$entername.". Previously selected time was: ".$selectedtime.".)</center>";
+				      echo "<center> (Hello, ".$user.". Previously selected time was: ".$selectedtime.".)</center>";
 				    }
 				    echo "<br/>";
 				  ?>
-				  <form class="well form-inline" method="POST" action="selecttime.php">
-				  <?php 
-				    include ('./filter_form.html');
-				  ?>
-				  </form>
-				<table class="table table-striped">
-					<thead>
-							<tr>
-								<th>Name</th>
-								<th>Open/Closed</th>
-								<th>Winner</th>
-								<th>Category</th>
-							</tr>
-					</thead>
-					<?php
-					$query = "select name, date(ends) as date_ends from Item";
-					try {
-						$result = $db->query($query);
-						$currenttime = $db->query("select date('currenttime') from Time")->fetch();
-						while ($row = $result->fetch()) {
-							echo "<tr><td>" . htmlspecialchars($row["name"]) . "</td><td>";
-							if ($row["date_ends"] < $currenttime) {
-								echo "Closed";
-							} else {
-								echo "Open";
-							}
-							echo "</td><td>the winner</td><td>the category</td></tr>";
-						}
-					} catch (PDOException $e) {
-						echo "Item query failed: " . $e->getMessage();
-					}
-					?>
-				</table>
+				  <form class="well form-inline" id="filter-form" action="#" method="GET">
+				                       <?php
+				                         include ('./filter_form.php');
+				                       ?>
+				                       </form>
+				  
+				<table class="table table-striped" id="items-table"></table>
 			</div>
 		</div>
 	</div>
 </body>
 </html>
+
+
+<script type="text/javascript" src="jquery-1.7.2.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+//	drawItems("2001-12-22 00:00:01", "Rose", "Boats", 900, 300, 738934008);
+//	console.log("Done drawing!");
+});
+
+
+$('#filter-form').submit(function() {
+	var data = $(this).serializeArray();
+	$('#items-table').load("drawer.php", data);
+	return false;
+});
+
+
+function filterByCategory() {
+	var category = this.childNodes[0].nodeValue();
+	// draw items with ajax
+	drawItems($selectedtime, $id)
+}
+</script>

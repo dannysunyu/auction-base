@@ -1,7 +1,12 @@
+<?php 
+	  include ('./sqlitedb.php');	
+?>
+
 <table>
     <tr>
         <td>
 <p>
+	
 Month:
 <select class="input-small" size="1" name="MM">
     <option selected value="01">Jan</option>
@@ -218,7 +223,7 @@ Second:
     <option>59</option>
 </select>
 </p>
-<p>Please enter your name: <input type="text" name="entername" value="Dr. Clock"></p>
+<p>Please enter your name: <input type="text" name="user" value="Dr. Clock"></p>
 
 <div class="controls">
 <span class="input-prepend input-append">
@@ -233,21 +238,49 @@ Second:
 </div>
 
 <br/>
+<p>	Category:   
+	<select class="input-large" name="category">
+		<option value="All Categories">All Categories</option>
+	<?php
+		$query = "select distinct category from Category";
+		try {
+			$result = $db->query($query);
+			while ($row = $result->fetch()) {
+				echo "<option value ='" . htmlspecialchars($row["category"]) . "'>" . htmlspecialchars($row["category"]) . "</option>";
+			}
+		} catch (PDOException $e) {
+			echo "Item query failed: " . $e->getMessage();
+		}
+	?>
+	</select>	
+</p>	
 
 <div class="controls">
 <label class="radio">
-  <input id="optionsRadios1" type="radio" checked="" value="option1"
-	 name="optionsRadios">
+  <input id="optionsRadios1" type="radio" checked="" value="open"
+	 name="openOrClosed">
   Open
   </label>
 <br/>
 <label class="radio">
-  <input id="optionsRadios2" type="radio" checked="" value="option2"
-	 name="optionsRadios">
+  <input id="optionsRadios2" type="radio" checked="" value="closed"
+	 name="openOrClosed">
   Closed
 </label>
-</div>
 <br/>
+<label class="radio">
+  <input id="optionsRadios3" type="radio" checked="" value="either"
+         name="openOrClosed">
+  Either
+</label>
+</div>
+
+
+
+<br/>
+<p><input type="text" name="itemID" placeholder="Item ID"></p>
+<br/>
+
 <p><input type="submit" class="btn" value="Submit"></p>
         </td>
     </tr>

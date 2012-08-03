@@ -94,26 +94,31 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
       while ($row = $result->fetch()) {
           echo "<tr><td>" . $row["itemID"];
            echo "</td><td>" . htmlspecialchars($row["name"]) . "</td><td>";
-           $closed = strtotime($row["date_ends"]) < date($selectedtime);
-		   echo ($closed ? "Closed" : "Open");
+           $closed = strtotime($row["date_ends"]) < strtotime(date($selectedtime));
+		   echo ($closed ? "Closed on " : "Will close on ") . $row["date_ends"];
 		   echo "</td><td>" . money_format('$%i', floatval($row["currently"])) . "</td><td>";
 		   if ($closed) {
-			   echo "</td><td>winner</td><td>";
+			   $winner_query = "select distinct bidderID from Bid NATURAL JOIN Bidder where itemID=" . $itemID . 
+				   " and amount = (select max(amount) from Bid where itemID=".$itemID.");";
+			   try {
+				   $winner_result = $db->query($winner_query);
+				   $winner_row = $winner_result->fetch();
+				   $winner = $winner_row["bidderID"];
+     			    echo "</td><td>". $winner ."</td><td>";
+			   } catch (PDOException $e) {
+				        echo "Winner query failed: " . $e->getMessage();
+					}
 		   } else {
 			   drawBidButton();
 		   }
-           $category_query = "select distinct category from Category where itemID = "
- . $itemID;
-           $categories =
- $db->query($category_query);
-           while ($category =
- $categories->fetch()) {
+           $category_query = "select distinct category from Category where itemID = " . $itemID;
+           $categories = $db->query($category_query);
+           while ($category = $categories->fetch()) {
                 echo " " . $category;
            }
            echo "</td></tr>";
       }
  } catch (PDOException $e) {
-      echo "Item query failed: "
- . $e->getMessage();
+      echo "Item query failed: " . $e->getMessage();
  }
 ?>

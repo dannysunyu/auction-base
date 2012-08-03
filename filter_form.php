@@ -281,7 +281,7 @@ Second:
 <p><input type="text" name="itemID" placeholder="Item ID"></p>
 <br/>
 
-<p><input type="submit" class="btn" value="Submit"></p>
+<p>Item ID: <input type="submit" class="btn" value="Submit"></p>
         </td>
     </tr>
 </table>

@@ -30,20 +30,9 @@ include ('./sqlitedb.php');
 	$selectedTime = $yyyy."-".$MM."-".$dd." ".$HH.":".$mm.":".$ss;
 ?>
 
-<?php
-	$HTML = '<h3>Parameters</h3><div class="well">';
-	foreach ($_POST as $key => $entry)
-	{
-	     if (is_array($entry)) {
-	        foreach($entry as $value)
-   			 $HTML .= $key .": " . $value . "<br/>";
-	     } else {
-			 $HTML .= $key .": " . $entry . "<br/>";
-	     }
-	}
-	$HTML .= '</div>';
-	echo "<script type='text/javascript'> $('#query-info').append('".$HTML."')</script>";
-?>
+<script type="text/javascript">
+	$("#query-info").children().remove()
+</script>
 
 <?php
 function drawBidButton() {
@@ -105,7 +94,23 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
  $condition .= ";";
  $query .= $condition;
  
- echo "<script type='text/javascript'> $('#query-info').append('<h3>Query</h3><div class=\"well\">". $query . "</div>')</script>";
+ /* Query info */
+	echo "<script type='text/javascript'> $('#query-info').append('<h3>Query</h3><div class=\"well\">". $query . "</div>')</script>";
+ 
+ 	$HTML = '<h3>Parameters</h3><div class="well">';
+ 	foreach ($_POST as $key => $entry)
+ 	{
+ 	     if (is_array($entry)) {
+ 	        foreach($entry as $value)
+    			 $HTML .= $key .": " . $value . "<br/>";
+ 	     } else {
+ 			 $HTML .= $key .": " . $entry . "<br/>";
+ 	     }
+ 	}
+ 	$HTML .= '</div>';
+ 	echo "<script type='text/javascript'> $('#query-info').append('".$HTML."')</script>";
+
+ 
  try {
       $result = $db->query($query);
       $currenttime = $db->query("select date('currenttime') from Time")->fetch();
@@ -135,15 +140,19 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 		   }
            $categoryQuery = "select distinct category from Category where itemID = " . $row["itemID"];
            $categories = $db->query($categoryQuery);
-		   $firstCategory = True;
+		   $first = True;
+		   $categoriesString = '';
            while ($categoryRow = $categories->fetch()) {
-			   
-                echo "<p>" . $categoryRow["category"] . "</p>";
-				$firstCategory = False;
+			   if (!$first) 
+				   $categoriesString .= ", ";
+                $categoriesString .= $categoryRow["category"];
+				$first = False;
            }
-           echo "</td></tr>";
+		   $categoriesString = substr($categoriesString, 0, -2);
+           echo "" . $categoriesString . "</td></tr>";
       }
  } catch (PDOException $e) {
       echo "Item query failed: " . $e->getMessage();
  }
 ?>
+

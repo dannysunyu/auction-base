@@ -1,14 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta content="text/html" charset="UTF-8"/>
 <title>AuctionBase</title>
 <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css"/>
+<style type="text/css">	body {padding-top: 60px;} </style>
 </head>
-<style>
-body {padding-top: 60px;}
-</style>
 <body>
 	<?php 
 	  include ('./navbar.html');
@@ -45,7 +42,7 @@ body {padding-top: 60px;}
 				    echo "<br/>";
 				  ?>
 				  <h2>Filter your search</h2><br/>
-				  <form class="well form-inline" id="filter-form" action="#" method="GET">
+				  <form class="well form-inline" id="filter-form" action="#" method="get">
 				                       <?php
 				                         include ('./filter_form.php');
 				                       ?>
@@ -55,31 +52,27 @@ body {padding-top: 60px;}
 			</div>
 		</div>
 	</div>
-</body>
-</html>
-
 
 <script type="text/javascript" src="jquery-1.7.2.min.js"></script>
-<script src="bootstrap/js/bootstrap-modal.js"></script>
-<script src="bootstrap/js/bootstrap-transition.js"></script>
+<script type="text/javascript" src="bootstrap/js/bootstrap-modal.js"></script>
+<script type="text/javascript" src="bootstrap/js/bootstrap-transition.js"></script>
 <script type="text/javascript">
-$(document).ready(function() {
-//	drawItems("2001-12-22 00:00:01", "Rose", "Boats", 900, 300, 738934008);
-//	console.log("Done drawing!");
-});
+	$(document).ready(function() {
+	});
 
+	$('#filter-form').submit(function() {
+		var data = $(this).serializeArray();
+		$('#items-table').load("drawer.php", data);
+		$('#query-info').load("query-info.php", data);
+		return false;
+	});
 
-$('#filter-form').submit(function() {
-	var data = $(this).serializeArray();
-	$('#items-table').load("drawer.php", data);
-	$('#query-info').load("query-info.php", data);
-	return false;
-});
-
-
-function filterByCategory() {
-	var category = this.childNodes[0].nodeValue();
-	// draw items with ajax
-	drawItems($selectedtime, $id)
-}
+	function filterByCategory() {
+		var category = this.childNodes[0].nodeValue();
+		// draw items with ajax
+		drawItems($selectedtime, $id)
+	}
 </script>
+
+</body>
+</html>

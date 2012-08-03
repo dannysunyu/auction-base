@@ -223,17 +223,19 @@ Second:
     <option>59</option>
 </select>
 </p>
-<p>Please enter your name: <input type="text" name="user" value="Dr. Clock"></p>
+<p>Please enter your name: <input type="text" name="user" value="Dr. Clock" /></p>
 
 <div class="controls">
 <span class="input-prepend input-append">
-  <span class="add-on">$</span><input id="appendedPrependedInputMax" name="maxPrice" class="span2" type="text" size="80"
-  placeholder="Max Price"></input><span class="add-on">.00</span>
+  <span class="add-on">$</span>
+  	<input id="appendedPrependedInputMax" name="maxPrice" class="span2" type="text" size="80" placeholder="Max Price" />
+  <span class="add-on">.00</span>
 </span>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <span class="input-prepend input-append">
-  <span class="add-on">$</span><input id="appendedPrependedInputMin" name="minPrice" class="span2" type="text" size="80"
-  placeholder="Min Price"></input><span class="add-on">.00</span>
+  <span class="add-on">$</span>
+  	<input id="appendedPrependedInputMin" name="minPrice" class="span2" type="text" size="80" placeholder="Min Price" />
+  <span class="add-on">.00</span>
 </span>
 </div>
 
@@ -246,7 +248,7 @@ Second:
 		try {
 			$result = $db->query($query);
 			while ($row = $result->fetch()) {
-				echo "<option value ='" . htmlspecialchars($row["category"]) . "'>" . htmlspecialchars($row["category"]) . "</option>";
+				echo '<option value ="' . htmlspecialchars($row["category"]) . '">' . htmlspecialchars($row["category"]) . '</option>';
 			}
 		} catch (PDOException $e) {
 			echo "Item query failed: " . $e->getMessage();
@@ -256,32 +258,22 @@ Second:
 </p>	
 
 <div class="controls">
-<label class="radio">
-  <input id="optionsRadios1" type="radio" checked="" value="open"
-	 name="openOrClosed">
-  Open
-  </label>
-<br/>
-<label class="radio">
-  <input id="optionsRadios2" type="radio" checked="" value="closed"
-	 name="openOrClosed">
-  Closed
-</label>
-<br/>
-<label class="radio">
-  <input id="optionsRadios3" type="radio" checked="" value="either"
-         name="openOrClosed">
-  Either
-</label>
+	<label class="radio">Open</label> 
+	<input id="optionsRadios1" type="radio" checked="" value="open" name="openOrClosed" /> 
+	<br/>
+	<label class="radio">Closed</label> 
+	<input id="optionsRadios2" type="radio" checked="" value="closed" name="openOrClosed" />
+	<br/>
+	<label class="radio">Either</label>
+	<input id="optionsRadios3" type="radio" checked="" value="either" name="openOrClosed" />
 </div>
 
 
-
 <br/>
-<p><input type="text" name="itemID" placeholder="Item ID"></p>
+<p><input type="text" name="itemID" placeholder="Item ID" /></p>
 <br/>
 
-<p>Item ID: <input type="submit" class="btn" value="Submit"></p>
+<p>Item ID: <input type="submit" class="btn" value="Submit" /></p>
         </td>
     </tr>
 </table>

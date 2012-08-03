@@ -13,9 +13,9 @@ include ('./sqlitedb.php');
 	$maxPrice = intval($_POST["maxPrice"]);
 	$minPrice = intval($_POST["minPrice"]);
 	$openOrClosed = $_POST["openOrClosed"];
-	$itemID = intval($_POST["itemID"]);
-	$category = $_POST["category"];
-	$selectedtime = $yyyy."-".$MM."-".$dd." ".$HH.":".$mm.":".$ss;
+	$selectedItemID = intval($_POST["itemID"]);
+	$selectedCategory = $_POST["category"];
+	$selectedTime = $yyyy."-".$MM."-".$dd." ".$HH.":".$mm.":".$ss;
 ?>
 <thead>
   <tr>
@@ -69,8 +69,8 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
  if (strlen($_POST['itemID']) > 0)
 	 $conditions[] = "Item.itemID = " . intval($_POST['itemID']);
  else {
-	 if ($category != "All Categories") 
-		 $conditions[] = "itemID in (select itemID from Category where category=" . $category . ")";
+	 if ($selectedCategory != "All Categories") 
+		 $conditions[] = "itemID in (select itemID from Category where category=" . $selectedCategory . ")";
 	 if ($maxPrice > 0) 
 		 $conditions[] = "Item.currently =< " . $maxPrice;
 	 if ($minPrice > 0)
@@ -86,6 +86,7 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 	 addCondition($condition, $conditionFragment, $needsAnd, $isFirstCondition);
  }
  
+ 
  $condition = $condition . ";";
  $query = $query . $condition;
  try {
@@ -98,23 +99,28 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 		   echo ($closed ? "Closed on " : "Will close on ") . $row["date_ends"];
 		   echo "</td><td>" . money_format('$%i', floatval($row["currently"])) . "</td><td>";
 		   if ($closed) {
-			   $winner_query = "select distinct bidderID from Bid NATURAL JOIN Bidder where itemID=" . $itemID . 
-				   " and amount = (select max(amount) from Bid where itemID=".$itemID.");";
+			   $winnerQuery = "select distinct bidderID from Bid NATURAL JOIN Bidder where itemID=" . $row["itemID"] . 
+				   " and amount = (select max(amount) from Bid where itemID=".$row["itemID"].");";
 			   try {
-				   $winner_result = $db->query($winner_query);
-				   $winner_row = $winner_result->fetch();
-				   $winner = $winner_row["bidderID"];
-     			    echo "</td><td>". $winner ."</td><td>";
-			   } catch (PDOException $e) {
+				   $winnerResult = $db->query($winnerQuery);
+				   $winnerRow = $winner_result->fetch();
+				   $winner = $winnerRow["bidderID"];
+				   if (strlen($winner) > 0)
+						echo $winner ."</td><td>";
+				   else 
+					   echo "No bidders</td><td>";
+			    } catch (PDOException $e) {
 				        echo "Winner query failed: " . $e->getMessage();
-					}
+				}
 		   } else {
 			   drawBidButton();
+			   echo "</td><td>";
 		   }
-           $category_query = "select distinct category from Category where itemID = " . $itemID;
-           $categories = $db->query($category_query);
-           while ($category = $categories->fetch()) {
-                echo " " . $category;
+           $categoryQuery = "select distinct category from Category where itemID = " . $row["itemID"];
+           $categories = $db->query($categoryQuery);
+           while ($categoryRow = $categories->fetch()) {
+                echo "<p>" . $categoryRow["category"] . "</p>";
+				//echo "<p>category here.</p>";
            }
            echo "</td></tr>";
       }

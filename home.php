@@ -50,8 +50,9 @@
 				                         include ('./filter_form.php');
 				                       ?>
 				                       </form>
-				 <div id="query-info"></div>
+				<div id="query-info"></div>
 				<table class="table table-striped" id="items-table"></table>
+				<div id="search-results"></div>
 			</div>
 		</div>
 	</div>
@@ -59,7 +60,10 @@
 <script type="text/javascript" src="jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="bootstrap/js/bootstrap-modal.js"></script>
 <script type="text/javascript" src="bootstrap/js/bootstrap-transition.js"></script>
+<script type="text/javascript" src="bootstrap/js/bootstrap-tooltip.js"></script>
+
 <script type="text/javascript">
+
 	$(document).ready(function() {
 	});
 

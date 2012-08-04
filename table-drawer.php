@@ -35,20 +35,19 @@ include ('./sqlitedb.php');
 </script>
 
 <script type="text/javascript">
-function loadModalBody(bidItemID) {
-	alert('I work! The item ID is ' + bidItemID);
-	$('#bid-' + bidItemID + '-modal-body').load('bid-modal-body.php', { "first" : "1", "second" : "2"});
+function loadModalBody(bidItemID, numBids) {
+	$('#bid-' + bidItemID + '-modal-body').load('bid-modal-body.php', { "itemID" : bidItemID, "numBids" : numBids, "user" : <?php echo '"'.$user.'"' ?> });
 }
 </script>
 
 <?php
-function drawBidButton($bidItemID, $bidItemName) {
+function drawBidButton($bidItemID, $bidItemName, $numBids) {
 	echo
-	'<a class="btn" data-toggle="modal" href="#bid-modal-'.$bidItemID.'" onclick="loadModalBody('.$bidItemID.')">Bid</a>
+	'<a class="btn" data-toggle="modal" href="#bid-modal-'.$bidItemID.'" onclick="loadModalBody('.$bidItemID.', '.$numBids.')">Bid</a>
     <div class="modal fade hide" id="bid-modal-'.$bidItemID.'">
 	    <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">×</button>
-		    <h3>'.$bidItemName. $bidItemID.'</h3>
+		    <h3>'.$bidItemName.'</h3>
 		</div>
 		<div class="modal-body" id="bid-'.$bidItemID.'-modal-body">
 		</div>
@@ -85,12 +84,10 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 		 $conditions[] = "Item.currently =< " . $maxPrice;
 	 if ($minPrice > 0)
 		 $conditions[] = "Item.currently >= " . $minPrice;
-	 if ($openOrClosed == "open") {
-		 echo '<script type="text/javascript">alert("'. $selectedTime .'")</script>';
-		 $conditions[] = "date_ends > date('" . $selectedTime . "')";
-	 }
+	 if ($openOrClosed == "open")
+		 $conditions[] = 'date_ends > date("' . $selectedTime . '")';
 	 else if ($openOrClosed == "closed") 
-		 $conditions[] = "date_ends > date('" . $selectedTime . "')";
+		 $conditions[] = 'date_ends < date("' . $selectedTime . '")';
  }
  
  foreach($conditions as $conditionFragment) {
@@ -101,7 +98,8 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
  $query .= $condition;
  
  /* Query info */
-	echo "<script type='text/javascript'> $('#query-info').append('<h3>Query</h3><div class=\"well\">". $query . "</div>')</script>";
+	 
+	echo "<script type='text/javascript'> $('#query-info').append('<h3>Query</h3><div class=\"well\">". htmlspecialchars($query) . "</div>')</script>";
  
  	$HTML = '<h3>Parameters</h3><div class="well">';
  	foreach ($_POST as $key => $entry)
@@ -117,7 +115,6 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
  	$HTML .= '</div>';
  	echo "<script type='text/javascript'> $('#query-info').append('".$HTML."')</script>";
 
- 
  try {
       $result = $db->query($query);
       while ($row = $result->fetch()) {
@@ -151,7 +148,7 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 				}
 		   } else {
 			   $bidArray = array();	
-			   drawBidButton($row["itemID"], $row["name"]);
+			   drawBidButton($row["itemID"], $row["name"], $numBids);
 			   echo "</td><td>";
 		   }
            $categoryQuery = "select distinct category from Category where itemID = " . $row["itemID"];
@@ -164,7 +161,6 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
                 $categoriesString .= $categoryRow["category"];
 				$first = False;
            }
-		   $categoriesString = substr($categoriesString, 0, -2);
            echo "" . $categoriesString . "</td></tr>";
       }
  } catch (PDOException $e) {

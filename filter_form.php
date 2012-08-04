@@ -228,7 +228,8 @@ Second:
 <div class="controls">
 <span class="input-prepend input-append">
   <span class="add-on">$</span><input id="appendedPrependedInputMax" name="maxPrice" class="span2" type="text" size="80" placeholder="Max Price" /><span class="add-on">.00</span>
-</div>
+</span>
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <span class="input-prepend input-append">
   <span class="add-on">$</span><input id="appendedPrependedInputMin" name="minPrice" class="span2" type="text" size="80" placeholder="Min Price" /><span class="add-on">.00</span>

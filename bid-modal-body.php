@@ -32,17 +32,18 @@ try {
 }
 ?>
 <div id="history-table"></div>
+<div id="alert-container"></div>
 <script type="text/javascript">
 	$('#history-table').load('history-table.php', { "itemID" : <?php echo $_REQUEST["itemID"] ?>, "numBids" : <?php echo $_REQUEST["numBids"]?>})
 </script>
 
 <script type="text/javascript">
-
-
 	$('#bid-form').live('submit', function(e) {
-		alert('Yes');
 		e.preventDefault();
-		$('#history-table').load("history-table.php", { "itemID" : <?php echo $_REQUEST["itemID"] ?>, "numBids" : <?php echo $_REQUEST["numBids"]?>, "user" : <?php echo "'".$_REQUEST["user"]."'" ?>, "bid" : $('#bid').val(), "selectedTime" : <?php echo "'".$_REQUEST["selectedTime"]."'" ?> });
+		//alert('The bid is ' + $('#bid').val());
+		var data = { "itemID" : <?php echo $_REQUEST["itemID"] ?>, "numBids" : <?php echo $_REQUEST["numBids"]?>, "user" : <?php echo "'".$_REQUEST["user"]."'" ?>, "bid" : $('#bid').val(), "selectedTime" : <?php echo "'".$_REQUEST["selectedTime"]."'" ?> }
+		$('#alert-container').load("./post-bid.php", data);
+		$('#history-table').load("./history-table.php", {"itemID" : <?php echo $_REQUEST["itemID"] ?>});
 		return false;
 	});
 </script>

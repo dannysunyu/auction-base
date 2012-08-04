@@ -1,21 +1,6 @@
 <?php
 include ("./_header.php");
 ?>
-			<!--
-			<div class="span2">
-				<div class="well" style="padding: 8px 0;">
-					<ul class="nav nav-list">
-						<li class="nav-header">
-							I'm a sidebar.
-						</li>
-						<?php
-						for ($i = 0; $i < 30; $i+=1)
-							echo ("<li>hey " . $i . "</li>");
-						?>
-					</ul>
-				</div>
-			</div>
-			-->
 			<div class="span12">
 				  <?php
 				    $MM = $_POST["MM"];
@@ -52,7 +37,7 @@ include ("./_header.php");
 				function filterByCategory() {
 					var category = this.childNodes[0].nodeValue();
 					// draw items with ajax
-					drawItems($selectedtime, $id)
+					drawItems($selectedtime, $id);
 				}
 			</script>
 

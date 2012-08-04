@@ -13,8 +13,15 @@ try {
 
 	echo '<p><strong>Seller </strong> '.$item["sellerID"].'<strong>    Rating</strong>  '. $item["rating"] .'</p>';
 	echo '<p><strong>Description  </strong> '.$item["description"].'</p>';
-	echo '<p><strong>Started  </strong>'.$item["started"].'</p>';
-	echo '<p><strong>Ends on  </strong>'.$item["ends"].'</p>';
+	echo '<p><strong>Started on  </strong>'.$item["started"].'</p>';
+	$isBiddingOpen = $_POST["isBiddingOpen"] == "true";
+	$endsTitle = ($isBiddingOpen) ? "Ends on" : "Ended on";
+	echo '<p><strong>'.$endsTitle.'  </strong>'.$item["ends"].'</p>';
+	if ($isBiddingOpen) 
+		echo '<p> Enter your bid here: ... </p>';
+	else {
+		echo '<p>Bidding is closed. </p>';
+	}
 } catch (PDOException $e) {
 	echo "Bid item query failed: " . $e->getMessage();
 }

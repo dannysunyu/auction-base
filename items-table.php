@@ -6,6 +6,7 @@
 	 <th>Current Price</th>
 	 <th>Number of Bids</th>
      <th>Winner</th>
+	 <th>Action</th>
      <th>Category</th>
   </tr>
 </thead>
@@ -35,15 +36,15 @@ include ('./sqlitedb.php');
 </script>
 
 <script type="text/javascript">
-function loadModalBody(bidItemID, numBids) {
-	$('#bid-' + bidItemID + '-modal-body').load('bid-modal-body.php', { "itemID" : bidItemID, "numBids" : numBids, "user" : <?php echo '"'.$user.'"' ?> });
+function loadModalBody(bidItemID, numBids, isBiddingOpen) {
+	$('#bid-' + bidItemID + '-modal-body').load('bid-modal-body.php', { "itemID" : bidItemID, "numBids" : numBids, "user" : <?php echo '"'.$user.'"'?>, "isBiddingOpen": isBiddingOpen });
 }
 </script>
 
 <?php
-function drawBidButton($bidItemID, $bidItemName, $numBids) {
-	echo
-	'<a class="btn" data-toggle="modal" href="#bid-modal-'.$bidItemID.'" onclick="loadModalBody('.$bidItemID.', '.$numBids.')">Bid</a>
+function drawBidButton($bidItemID, $bidItemName, $numBids, $isBiddingOpen) {
+	$buttonTitle = ($isBiddingOpen) ? "Bid" : "History";	
+	echo '<a class="btn" data-toggle="modal" href="#bid-modal-'.$bidItemID.'" onclick="loadModalBody('.$bidItemID.', '.$numBids.', '.($isBiddingOpen ? 'true' : 'false').')">'.$buttonTitle.'</a>
     <div class="modal fade hide" id="bid-modal-'.$bidItemID.'">
 	    <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">×</button>
@@ -51,11 +52,15 @@ function drawBidButton($bidItemID, $bidItemName, $numBids) {
 		</div>
 		<div class="modal-body" id="bid-'.$bidItemID.'-modal-body">
 		</div>
-		<div class="modal-footer">
-		    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
-		    <a href="#" class="btn btn-primary">Bid</a>
-	    </div>
-    </div>';
+		<div class="modal-footer">';
+	if ($isBiddingOpen) {
+		echo '<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+		    <a href="#" class="btn btn-primary">'.$buttonTitle.'</a>';
+		}
+	else {
+		echo '<a href="#" class="btn" data-dismiss="modal">Done</a';
+	}
+	echo '</div></div>';
 }
 ?>
 
@@ -146,11 +151,13 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 			    } catch (PDOException $e) {
 				        echo "Winner query failed: " . $e->getMessage();
 				}
+				drawBidButton($row["itemID"], $row["name"], $numBids, False);
 		   } else {
+			   echo "</td><td>"; // no winner
 			   $bidArray = array();	
-			   drawBidButton($row["itemID"], $row["name"], $numBids);
-			   echo "</td><td>";
+			   drawBidButton($row["itemID"], $row["name"], $numBids, True);
 		   }
+		   echo "</td><td>";
            $categoryQuery = "select distinct category from Category where itemID = " . $row["itemID"];
            $categories = $db->query($categoryQuery);
 		   $first = True;

@@ -1,19 +1,6 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<head>
-<meta content="text/html" charset="UTF-8"/>
-<title>AuctionBase</title>
-<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css"/>
-<link rel="stylesheet" type="text/css" href="css/home.css"/>
-<style type="text/css">	body {padding-top: 60px;} </style>
-</head>
-<body>
-	<?php 
-	  include ('./navbar.html');
-	  include ('./sqlitedb.php');	
-	?>
-	<div class="container">
-		<div class="row-fluid">
+<?php
+include ("./_header.php");
+?>
 			<!--
 			<div class="span2">
 				<div class="well" style="padding: 8px 0;">
@@ -54,31 +41,21 @@
 				<table class="table table-striped" id="items-table"></table>
 				<div id="search-results"></div>
 			</div>
-		</div>
-	</div>
+			
+			<script type="text/javascript">
+				$('#filter-form').submit(function() {
+					var data = $(this).serializeArray();
+					$('#items-table').load("items-table.php", data);
+					return false;
+				});
 
-<script type="text/javascript" src="jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="bootstrap/js/bootstrap-modal.js"></script>
-<script type="text/javascript" src="bootstrap/js/bootstrap-transition.js"></script>
-<script type="text/javascript" src="bootstrap/js/bootstrap-tooltip.js"></script>
+				function filterByCategory() {
+					var category = this.childNodes[0].nodeValue();
+					// draw items with ajax
+					drawItems($selectedtime, $id)
+				}
+			</script>
 
-<script type="text/javascript">
-
-	$(document).ready(function() {
-	});
-
-	$('#filter-form').submit(function() {
-		var data = $(this).serializeArray();
-		$('#items-table').load("items-table.php", data);
-		return false;
-	});
-
-	function filterByCategory() {
-		var category = this.childNodes[0].nodeValue();
-		// draw items with ajax
-		drawItems($selectedtime, $id)
-	}
-</script>
-
-</body>
-</html>
+<?php
+include("./_footer.php");
+?>

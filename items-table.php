@@ -37,7 +37,7 @@ include ('./sqlitedb.php');
 
 <script type="text/javascript">
 function loadModalBody(bidItemID, numBids, isBiddingOpen) {
-	$('#bid-' + bidItemID + '-modal-body').load('bid-modal-body.php', { "itemID" : bidItemID, "numBids" : numBids, "user" : <?php echo '"'.$user.'"'?>, "isBiddingOpen": isBiddingOpen });
+	$('#bid-' + bidItemID + '-modal-body').load('bid-modal-body.php', { "itemID" : bidItemID, "numBids" : numBids, "user" : <?php echo '"'.$user.'"'?>, "isBiddingOpen": isBiddingOpen, "selectedTime" : <?php echo "'".$selectedTime."'" ?> });
 }
 </script>
 
@@ -53,13 +53,7 @@ function drawBidButton($bidItemID, $bidItemName, $numBids, $isBiddingOpen) {
 		<div class="modal-body" id="bid-'.$bidItemID.'-modal-body">
 		</div>
 		<div class="modal-footer">';
-	if ($isBiddingOpen) {
-		echo '<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-		    <a href="#" class="btn btn-primary">'.$buttonTitle.'</a>';
-		}
-	else {
-		echo '<a href="#" class="btn" data-dismiss="modal">Done</a';
-	}
+	echo '<a href="#" class="btn" data-dismiss="modal">Done</a';
 	echo '</div></div>';
 }
 ?>

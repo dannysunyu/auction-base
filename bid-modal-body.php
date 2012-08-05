@@ -5,11 +5,10 @@ include ('./sqlitedb.php');
 <?php
 try {
 	$itemQuery = 'select sellerID, rating, description, Item.location, Item.country, firstBid, started, ends from Item NATURAL JOIN Seller where itemID = '. $_REQUEST["itemID"];	
-	
 	$itemResult = $db->query($itemQuery);
 	$item = $itemResult->fetch();
 
-	echo '<p><strong>Seller </strong> '.$item["sellerID"].'<strong>    Rating</strong>  '. $item["rating"] .'</p>';
+	echo '<p><strong>Seller   </strong> <a href="#" rel="tooltip" class="tip" title="Rating: '.$item["rating"].'">'.$item["sellerID"].' </a>';
 	echo '<p><strong>Description  </strong> '.$item["description"].'</p>';
 	echo '<p><strong>Location </strong> '.$item["location"].', '.$item["country"].'</p>';
 	echo '<p><strong>Started on  </strong>'.$item["started"].'</p>';
@@ -34,7 +33,7 @@ try {
 <div id="history-table"></div>
 <div id="alert-container"></div>
 <script type="text/javascript">
-	$('#history-table').load('history-table.php', { "itemID" : <?php echo $_REQUEST["itemID"] ?>, "numBids" : <?php echo $_REQUEST["numBids"]?>})
+	$('#history-table').load('history-table.php', { "itemID" : <?php echo $_REQUEST["itemID"] ?>, "numBids" : <?php echo $_REQUEST["numBids"]?>, "selectedTime" : <?php echo "'".$_REQUEST["selectedTime"]."'" ?> });
 </script>
 
 <script type="text/javascript">
@@ -47,3 +46,10 @@ try {
 		return false;
 	});
 </script>
+
+<script type="text/javascript">
+jQuery( function($) {
+    $("a.tip").tooltip();
+});
+</script>
+

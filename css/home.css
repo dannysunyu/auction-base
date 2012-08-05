@@ -11,10 +11,11 @@ body {
 }
 
 body .modal {
-    /* new custom width */
     width: 1000px;
-    /* must be half of the width, minus scrollbar on the left (30px) */
-    /*margin: -250px 0 0 -280px;*/
     left:33%;
-/*    margin-rigth:auto; */
+/*    top:33%; */
+}
+
+.modal-body {
+/*    max-height: 800px; */
 }

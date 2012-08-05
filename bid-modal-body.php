@@ -31,20 +31,23 @@ try {
 	echo "Bid item query failed: " . $e->getMessage();
 }
 ?>
+
+<div id="top-bidder-alert"></div>
 <div id="history-table"></div>
 <div id="alert-container"></div>
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$('#history-table').load('history-table.php', { "itemID" : <?php echo $_REQUEST["itemID"] ?>, "numBids" : <?php echo $_REQUEST["numBids"]?>, "selectedTime" : <?php echo "'".$_REQUEST["selectedTime"]."'" ?> });
+		$('#history-table').load('history-table.php', { "itemID" : <?php echo $_REQUEST["itemID"] ?>, "numBids" : <?php echo $_REQUEST["numBids"]?>, "selectedTime" : <?php echo "'".$_REQUEST["selectedTime"]."'" ?>, "user" : <?php echo "'".$_REQUEST["user"]."'" ?> });
     });
 
 	$('#bid-form').live('submit', function(e) {
 		e.preventDefault();
+		alert('The user is ' + <?php echo "'".$_REQUEST["user"]."'" ?>);
 		//alert('The bid is ' + $('#bid').val());
-		var data = { "itemID" : <?php echo $_REQUEST["itemID"] ?>, "numBids" : <?php echo $_REQUEST["numBids"]?>, "user" : <?php echo "'".$_REQUEST["user"]."'" ?>, "bid" : $('#bid').val(), "selectedTime" : <?php echo "'".$_REQUEST["selectedTime"]."'" ?> }
+		var data = { "itemID" : <?php echo $_REQUEST["itemID"] ?>, "numBids" : <?php echo $_REQUEST["numBids"]?>, "user" : <?php echo "'".$_REQUEST["user"]."'" ?>, "bid" : $('#bid').val(), "selectedTime" : <?php echo "'".$_REQUEST["selectedTime"]."'" ?>, "user did bid" : "True" };
 		$('#alert-container').load("./post-bid.php", data);
-		$('#history-table').load('history-table.php', { "itemID" : <?php echo $_REQUEST["itemID"] ?>, "selectedTime" : <?php echo "'".$_REQUEST["selectedTime"]."'" ?> });
+		$('#history-table').load('history-table.php', data); //{ "itemID" : <?php echo $_REQUEST["itemID"] ?>, "selectedTime" : <?php echo "'".$_REQUEST["selectedTime"]."'" ?> });
 		return false;
 	});
 

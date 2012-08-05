@@ -270,7 +270,7 @@ Second:
 <p><input type="text" name="itemID" placeholder="Item ID" /></p>
 <br/>
 
-<p><input type="submit" class="btn" value="Submit" /></p>
+<p><input type="submit" id="filter-submit-button" class="btn" value="Submit" /></p>
         </td>
     </tr>
 </table>

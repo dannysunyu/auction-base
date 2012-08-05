@@ -46,13 +46,13 @@ function drawBidButton($bidItemID, $bidItemName, $numBids, $isBiddingClosed) {
 	echo '<a class="'.$buttonClass.'" data-toggle="modal" href="#bid-modal-'.$bidItemID.'" onclick="loadModalBody('.$bidItemID.', '.$numBids.', '.($isBiddingClosed ? 'false' : 'true').')">'.$buttonTitle.'</a>
     <div class="modal fade hide" id="bid-modal-'.$bidItemID.'">
 	    <div class="modal-header">
-		    <button type="button" class="close" data-dismiss="modal">×</button>
+		    <button type="button" class="close done-btn" data-dismiss="modal">×</button>
 		    <h3>'.$bidItemName.'</h3>
 		</div>
 		<div class="modal-body" id="bid-'.$bidItemID.'-modal-body">
 		</div>
 		<div class="modal-footer">';
-	echo '<a href="#" class="btn" data-dismiss="modal">Done</a';
+	echo '<a href="#" class="btn" data-dismiss="modal" class="done-btn">Done</a';
 	echo '</div></div></div></div>';
 }
 ?>

@@ -21,15 +21,16 @@ include ("./_header.php");
 	
 	$usersCounts = array();
 	$users = array(
-		array("relation" => "Bidder", "description" => "bidders", "count" => 0),
-		array("relation" => "Seller", "description" => "sellers", "count" => 0)
+		array("relation" => "Bidder", "description" => "Bidders", "index" => 0),
+		array("relation" => "Seller", "description" => "Sellers", "index" => 1)
 		);
 	
 	foreach ($users as $u) {
 		try {
 			$numUsersQuery = "select count(*) as ct from ".$u["relation"].";";
 			$numUsersResult = $db->query($numUsersQuery);
-			$u["count"] = $numUsersResult->fetch();
+			$usersCountsRow = $numUsersResult->fetch();
+			$usersCounts[] = $usersCountsRow["ct"];
 		} catch (PDOException $e) {
 			  echo "Number of ".$u["description"]." query failed: " . $e->getMessage();
 		}
@@ -82,8 +83,8 @@ include ("./_header.php");
 	// group by bidderID and get the sum of the amounts, and return the number of bidders within the range of amounts.
 	
     $userTypes = array(
-				array("relation" => "Seller", "name" => "Sellers", "title" => "Amount Sellers Earn", "relation fragment" => "", "index" => 0), 
-				array("relation" => "Bidder", "name" => "Bidders", "title" => "Amount Bidders Spend", "relation fragment" => "Bid natural join", "index" => 1)
+				array("relation" => "Seller", "name" => "Sellers", "id name" => "sellerID", "title" => "Amount Sellers Earn", "relation fragment" => "", "index" => 0), 
+				array("relation" => "Bidder", "name" => "Bidders", "id name" => "bidderID", "title" => "Amount Bidders Spend", "relation fragment" => "Bid natural join", "index" => 1)
 			);
 	
 	$userSumCounts = array(array(), array());
@@ -165,8 +166,8 @@ include ("./_header.php");
 								foreach ($users as $u) {
 								?>
 									<tr>
-										<td><p class="alignleft"><?php echo $u["name"] ?></p></td>
-										<td><strong class="alignright"><?php echo $u["count"]; ?></strong></td>
+										<td><p class="alignleft">Number of <?php echo $u ["description"] ?></p></td>
+										<td><strong class="alignright"><?php echo $usersCounts[$u["index"]] ?></strong></td>
 									</tr>
 								<?php
 									}

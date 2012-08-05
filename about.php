@@ -55,7 +55,7 @@ include ("./_header.php");
 	for ($i = 0; $i < count($priceRanges); $i++) {
 		try {
 			$priceRangeQuery = "select count(*) as ct from Item where numberOfBids > 0 and ends < '2001-12-20 00:00:01' and currently >= ". $priceRanges[$i][0]." and currently < ". $priceRanges[$i][1].";";
-			echo '<p style="color:purple;">Query is '.$priceRangeQuery.'.</p>';
+			//echo '<p style="color:purple;">Query is '.$priceRangeQuery.'.</p>';
 			$priceRangeResult = $db->query($priceRangeQuery);
 			$priceRangeRow = $priceRangeResult->fetch();
 			$priceRangeCounts[] = $priceRangeRow["ct"];
@@ -63,20 +63,23 @@ include ("./_header.php");
 			  echo "Price range query failed: " . $e->getMessage();
 		}
 	}
-	
+	/*
 	for ($i = 0; $i < count($priceRangeCounts); $i++) {
 		echo '<p style="color: orange">Price range count is: '.$priceRangeCounts[$i].'</p>';
 	}
-	
+	*/
 	
 	// the item is sold, so numberOfBids > 0
 	// the bidder won the item, so the amount for the bid is equal to the currently for the item
 	// group by bidderID and get the sum of the amounts, and return the number of bidders within the range of amounts.
 	
-    $userTypes = array(array("relation" => "Seller", "id name" => "sellerID", "title" => "Amount Sellers Earn", "relation fragment" => ""), 
-				array("relation" => "Bidder", "id name" => "bidderID", "title" => "Amount Bidders Spend", "relation fragment" => "Bid natural join"));
+    $userTypes = array(
+				array("relation" => "Seller", "id name" => "sellerID", "title" => "Amount Sellers Earn", "relation fragment" => "", "index" => 0), 
+				array("relation" => "Bidder", "id name" => "bidderID", "title" => "Amount Bidders Spend", "relation fragment" => "Bid natural join", "index" => 1)
+			);
 	
-				/*
+	$userSumCounts = array(array(), array());
+	
 	foreach ($userTypes as $user) {
 		$userRanges = array();
 		for ($i = 0; $i < 20; $i++) {
@@ -100,18 +103,31 @@ include ("./_header.php");
 					     group by '.$user["id name"].'
 					) as Sums
 					where Sums.userSum >= '.$userRanges[$i][0].' and Sums.userSum < '.$userRanges[$i][1].';';
-							  echo '<p style="color:green;">Query is '.$userSumQuery.'.</p>';
+							  //echo '<p style="color:green;">Query is '.$userSumQuery.'.</p>';
 							                     $userSumResult = $db->query($userSumQuery);
 							                     $userSumRow = $userSumResult->fetch();
-							                     $user["sum counts"][] = $userSumRow["ct"];
+							                     $userSumCounts[$user["index"]][] = $userSumRow["ct"];
+								//echo '<p style="color:green;">Sum count is '.$userSumRow["ct"].'.</p>';				 
 					
 			} catch (PDOException $e) {
 				  echo "User sum query failed: " . $e->getMessage();
 			}
 		}
+		/*
+		for ($i = 0; $i < count($user["sum counts"]); $i++) {
+			echo '<p style="color: orange">Sum count is: '.$user["sum counts"][$i].'</p>';
+		}
+		*/
+	}
+	/*
+	foreach ($userTypes as $user) {
+		for ($i = 0; $i < count($userSumCounts[$user["index"]]); $i++) {
+			echo '<p style="color: orange">Sum count is: '.$userSumCounts[$user["index"]][$i].'</p>';
+		}
 	}
 	*/
 	
+
 	
 ?>
 
@@ -202,7 +218,7 @@ include ("./_header.php");
 										for ($i = 0; $i < count($userRanges); $i++) {
 											echo '<tr>
 													<td><p class="alignleft">$'.$userRanges[$i][0].' - $'. $userRanges[$i][1] .'</p></td>
-													<td><strong class="alignright">'.$user["sum counts"][$i].'</strong></td>
+													<td><strong class="alignright">'.$userSumCounts[$user["index"]][$i].'</strong></td>
 												</tr>';
 										}			
 									echo'<tr>

@@ -1,5 +1,6 @@
 <?php
-include ('./sqlitedb.php');	
+include ('sqlitedb.php');	
+include ('format-time.php');
 ?>
 
 <?php
@@ -21,16 +22,13 @@ include ('./sqlitedb.php');
 				$firstTime = False;
 				// the top user will be listed in the first row
 				
-			    echo '<p>user row is: '. $row["bidderID"] . '</p>';
-                echo '<p>user request is: "'. $_REQUEST["user"] . '"</p>';
-				
+
 				
 				if ($row["bidderID"] == $_REQUEST["user"]) {
 					$topBidder = True;
 				}
 			}
-			echo '<tr><td>'.money_format('$%i', floatval($row['amount'])).'</td><td>'.$row['time'].'</td><td><span style="color:rgb(0, 136, 204)" rel="tooltip" class="tip" title="Rating: '.$row['rating'].'">'.$row['bidderID'].'</span></td>';
-
+			echo '<tr><td>'.money_format('$%i', floatval($row['amount'])).'</td><td>'.FormatTime($row['time'], $_REQUEST["selectedTime"]).'</td><td><span style="color:rgb(0, 136, 204)" rel="tooltip" class="tip" title="Rating: '.$row['rating'].'">'.$row['bidderID'].'</span></td>';
 
 		}	
 		if ($firstTime)
@@ -38,16 +36,17 @@ include ('./sqlitedb.php');
 
 		if ($topBidder) {
 			echo '<div class="alert alert-success">You are the top bidder!</div>';
-			if ($_REQUEST["user did bid"] == "True") {
-				echo '<script type="text/javascript">
-					$(document).ready(function() {
-						// make the items table reload when the dismiss button is clicked
-						alert("this code runs.");
-						
+			//echo '<p>user did bid is '.$_REQUEST["didBid"].'</p>';
+			if ($_REQUEST["didBid"] == "True") {
+				//echo '<div class="alert alert-success">Yesssssssssss</div>';
+				echo '<script type="text/javascript"> 
+				    //alert("A");
+					//$(document).ready(function() {						
 						$(".done-btn").click(function() {
+							//alert("Done button clicked.")
 							$("#filter-submit-button").click();
 						});
-					}); 
+				//	}); 
 					</script>';
 			}
 		}
@@ -61,5 +60,3 @@ jQuery( function($) {
     $(".tip").tooltip();
 });
 </script>
-
-</table>

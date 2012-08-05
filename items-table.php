@@ -11,7 +11,8 @@
 </thead>
 
 <?php
-include ('./sqlitedb.php');	
+include ('sqlitedb.php');	
+include ('format-time.php');
 ?>
 
 <?php
@@ -31,19 +32,19 @@ include ('./sqlitedb.php');
 ?>
 
 <script type="text/javascript">
-function loadModalBody(bidItemID, numBids, isBiddingOpen) {
-	$('#bid-' + bidItemID + '-modal-body').load('bid-modal-body.php', { "itemID" : bidItemID, "numBids" : numBids, "user" : <?php echo '"'.$user.'"'?>, "isBiddingOpen": isBiddingOpen, "selectedTime" : <?php echo "'".$selectedTime."'" ?> });
+function loadModalBody(bidItemID, numBids, firstBid, isBiddingOpen) {
+	$('#bid-' + bidItemID + '-modal-body').load('bid-modal-body.php', { "itemID" : bidItemID, "numBids" : numBids, "firstBid" : firstBid, "user" : <?php echo '"'.$user.'"'?>, "isBiddingOpen": isBiddingOpen, "selectedTime" : <?php echo "'".$selectedTime."'" ?> });
 }
 </script>
 
 
 <?php
-function drawBidButton($bidItemID, $bidItemName, $numBids, $isBiddingClosed) {
+function drawBidButton($bidItemID, $bidItemName, $numBids, $firstBid, $isBiddingClosed) {
 	$buttonTitle = ($isBiddingClosed) ? "History" : "Bid";	
 	$buttonClass = ($isBiddingClosed) ? "btn" : "btn btn-primary";
 	echo '<div id="wrapper" style="display:table">';
 	echo '<div class="button-cell" style="display:table-cell; vertical-align:middle">';
-	echo '<a class="'.$buttonClass.'" data-toggle="modal" href="#bid-modal-'.$bidItemID.'" onclick="loadModalBody('.$bidItemID.', '.$numBids.', '.($isBiddingClosed ? 'false' : 'true').')">'.$buttonTitle.'</a>
+	echo '<a class="'.$buttonClass.'" data-toggle="modal" href="#bid-modal-'.$bidItemID.'" onclick="loadModalBody('.$bidItemID.', '.$numBids.', '.$firstBid.' , '.($isBiddingClosed ? 'false' : 'true').')">'.$buttonTitle.'</a>
     <div class="modal fade hide" id="bid-modal-'.$bidItemID.'">
 	    <div class="modal-header">
 		    <button type="button" class="close done-btn" data-dismiss="modal">×</button>
@@ -52,7 +53,7 @@ function drawBidButton($bidItemID, $bidItemName, $numBids, $isBiddingClosed) {
 		<div class="modal-body" id="bid-'.$bidItemID.'-modal-body">
 		</div>
 		<div class="modal-footer">';
-	echo '<a href="#" class="btn" data-dismiss="modal" class="done-btn">Done</a';
+	echo '<a href="#" class="btn done-btn" data-dismiss="modal">Done</a>';
 	echo '</div></div></div></div>';
 }
 ?>
@@ -69,7 +70,7 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 	$isFirstCondition = False;
 }
 
- $query = "select distinct itemID, name, currently, buyPrice, ends from Item";
+ $query = "select distinct itemID, name, currently, firstBid, buyPrice, ends from Item";
  $isFirstCondition = True;
  $needsAnd = False;
  $conditions = array();
@@ -139,7 +140,7 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 		   	   echo "Num Bids query failed: " . $e->getMessage();
 		   }
 		   
-		   drawBidButton($row["itemID"], $row["name"], $numBids, $closed);
+		   drawBidButton($row["itemID"], $row["name"], $numBids, $row["firstBid"],  $closed);
 		   echo "</td><td>";
            $categoryQuery = "select distinct category from Category where itemID = " . $row["itemID"];
            $categories = $db->query($categoryQuery);
@@ -156,89 +157,7 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
  } catch (PDOException $e) {
       echo "Item query failed: " . $e->getMessage();
  }
-?>
-
-<?php
-function FormatTime($timestamp, $currentTime)
-{
-	$timestamp = strtotime($timestamp);
-	
-	// Get time difference and setup arrays
-	$difference = strtotime($currentTime) - $timestamp;
-	
-	$periods = array("second", "minute", "hour", "day", "week", "month", "years");
-	$lengths = array("60","60","24","7","4.35","12");
- 
-	// Past or present
-	if ($difference >= 0) 
-	{
-		$ending = "ago";
-	}
-	else
-	{
-		$difference = -$difference;
-		$ending = "to go";
-	}
- 
-	// Figure out difference by looping while less than array length
-	// and difference is larger than lengths.
-	$arr_len = count($lengths);
-	for($j = 0; $j < $arr_len && $difference >= $lengths[$j]; $j++)
-	{
-		$difference /= $lengths[$j];
-	}
- 
-	// Round up		
-	$difference = round($difference);
- 
-	// Make plural if needed
-	if($difference != 1) 
-	{
-		$periods[$j].= "s";
-	}
- 
-	// Default format
-	$text = "$difference $periods[$j] $ending";
  
  
-	// over 24 hours
-	if($j > 2)
-	{
-		// future date over a day formate with year
-		if($ending == "to go")
-		{
-			if($j == 3 && $difference == 1)
-			{
-				$text = "tomorrow at ". date("g:i a", $timestamp);
-			}
-			else
-			{
-				$text = date("F j, Y \a\\t g:i a", $timestamp);
-			}
-			return $text;
-		}
- 
-		if($j == 3 && $difference == 1) // Yesterday
-		{
-			$text = "yesterday at ". date("g:i a", $timestamp);
-		}
-		else if($j == 3) // Less than a week display -- Monday at 5:28pm
-		{
-			$text = date("l \a\\t g:i a", $timestamp);
-		}
-		else if($j < 6 && !($j == 5 && $difference == 12)) // Less than a year display -- June 25 at 5:23am
-		{
-			$text = date("F j \a\\t g:i a", $timestamp);
-		}
-		else // if over a year or the same month one year ago -- June 30, 2010 at 5:34pm
-		{
-			$text = date("F j, Y \a\\t g:i a", $timestamp);
-		}
-	}
- 
-	return $text;
-}
-	
-	
 ?>
 

@@ -1,5 +1,5 @@
 <?php
-include ("./_header.php");
+include ("_header.php");
 ?>
 
 <?php
@@ -58,7 +58,6 @@ include ("./_header.php");
 	}
 	$priceRanges[] = array(200, 100000);
 	
-//	$priceRanges = array(array(0, 10), array(10, 20), array(20, 30), array(30, 40), array(40, 50), array array(100,9999999));
 	$priceRangeCounts = array();
 	
 	for ($i = 0; $i < count($priceRanges); $i++) {
@@ -72,6 +71,9 @@ include ("./_header.php");
 			  echo "Price range query failed: " . $e->getMessage();
 		}
 	}
+	
+
+	
 	/*
 	for ($i = 0; $i < count($priceRangeCounts); $i++) {
 		echo '<p style="color: orange">Price range count is: '.$priceRangeCounts[$i].'</p>';
@@ -135,14 +137,28 @@ include ("./_header.php");
 		}
 	}
 	*/
-	
-
-	
+	try {
+		$totalMoneyQuery = "select SUM(soldPrice) as totalMoney 
+			                  from (
+		                             select MAX(currently) as soldPrice
+								     from Item
+			                         where numberOfBids > 0 and ends < '2001-12-20 00:00:01'
+								     group by itemID
+								 );";
+		$totalMoneyResult = $db->query($totalMoneyQuery);
+		$totalMoneyRow = $totalMoneyResult->fetch();
+	} catch (PDOException $e) {
+		  echo "Total money query failed: " . $e->getMessage();
+	}
 ?>
 
 	<div class="span2">
 		<div class="well">
 			<center><a href="https://flavors.me/roseperrone">Rose Perrone</a> made this site for <a href="http://www.stanford.edu/class/cs145/">CS145, Databases</a></center>
+			<br/>
+			<center>
+				The data is eBay auction data ranging between November and December of 2001. This data was collected by the University of Wisconsin.
+			</center>
 		</div>
 	</div>
 	<div class="span3">
@@ -155,12 +171,16 @@ include ("./_header.php");
 					<table style="min-width: 100%;">
 						<tbody>
 								<tr>
-									<td><p class="alignleft">Auctions between Nov-Dec 2001</p></td>
+									<td><p class="alignleft">Auctions</p></td>
 									<td><strong class="alignright"><?php echo $numAuctionsRow["ct"]; ?></strong></td>
 								</tr>
 								<tr>
-									<td><p class="alignleft">Items Sold between Nov-Dec 2001</p></td>
+									<td><p class="alignleft">Items Sold</p></td>
 									<td><strong class="alignright"><?php echo $numSoldItemsRow["ct"]; ?></strong></td>
+								</tr>
+								<tr>
+									<td><p class="alignleft">Total Money Transferred</p></td>
+									<td><strong class="alignright">$<?php echo number_format($totalMoneyRow["totalMoney"], 0, "", ","); ?></strong></td>
 								</tr>
 								<?php
 								foreach ($users as $u) {

@@ -9,7 +9,7 @@
 	<link rel="stylesheet" type="text/css" href="css/home.css"/>
 	<style type="text/css">	body {padding-top: 60px;} </style>
 
-	<script type="text/javascript" src="jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="jquery-1.7.2.js"></script>
 	<script type="text/javascript" src="bootstrap/js/bootstrap-modal.js"></script>
 	<script type="text/javascript" src="bootstrap/js/bootstrap-transition.js"></script>
 	<script type="text/javascript" src="bootstrap/js/bootstrap-tooltip.js"></script>
@@ -19,5 +19,5 @@
 	include ("./navbar.php");
 	include ("./sqlitedb.php");	
 	echo '<div class="container">
-			<div class="row-fluid">';	
+			<div class="row-fluid">';
 ?>

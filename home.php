@@ -1,5 +1,5 @@
 <?php
-include ("./_header.php");
+include ("_header.php");
 ?>
 
 <div class="span12">
@@ -20,7 +20,7 @@ include ("./_header.php");
 	  <h2>Filter your search</h2><br/>
 	  <form class="well form-inline" id="filter-form" action="#" method="get">
 	                       <?php
-	                         include ('./filter_form.php');
+	                         include ('filter_form.php');
 	                       ?>
 	                       </form>
 	<table class="table table-bordered table-striped" style="background-color: white" id="items-table"></table>

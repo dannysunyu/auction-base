@@ -77,7 +77,7 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 	 $conditions[] = "Item.itemID = " . intval($_POST['itemID']);
  else {
 	 if ($selectedCategory != "All Categories") 
-		 $conditions[] = "itemID in (select itemID from Category where category=" . $selectedCategory . ")";
+		 $conditions[] = "itemID in (select itemID from Category where category='" . $selectedCategory . "')";
 	 if ($maxPrice > 0) 
 		 $conditions[] = "Item.currently =< " . $maxPrice;
 	 if ($minPrice > 0)

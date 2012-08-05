@@ -19,12 +19,20 @@ include ("./_header.php");
 		  echo "Number of sold items query failed: " . $e->getMessage();
 	}
 	
-	try {
-		$numUsersQuery = "select count(*) as ct from (select bidderID from Bidder UNION select sellerID from Seller);";
-		$numUsersResult = $db->query($numUsersQuery);
-		$numUsersRow = $numUsersResult->fetch();
-	} catch (PDOException $e) {
-		  echo "Number of users query failed: " . $e->getMessage();
+	$usersCounts = array();
+	$users = array(
+		array("relation" => "Bidder", "description" => "bidders", "count" => 0),
+		array("relation" => "Seller", "description" => "sellers", "count" => 0)
+		);
+	
+	foreach ($users as $u) {
+		try {
+			$numUsersQuery = "select count(*) as ct from ".$u["relation"].";";
+			$numUsersResult = $db->query($numUsersQuery);
+			$u["count"] = $numUsersResult->fetch();
+		} catch (PDOException $e) {
+			  echo "Number of ".$u["description"]." query failed: " . $e->getMessage();
+		}
 	}
 	
 	try {
@@ -74,8 +82,8 @@ include ("./_header.php");
 	// group by bidderID and get the sum of the amounts, and return the number of bidders within the range of amounts.
 	
     $userTypes = array(
-				array("relation" => "Seller", "id name" => "sellerID", "title" => "Amount Sellers Earn", "relation fragment" => "", "index" => 0), 
-				array("relation" => "Bidder", "id name" => "bidderID", "title" => "Amount Bidders Spend", "relation fragment" => "Bid natural join", "index" => 1)
+				array("relation" => "Seller", "name" => "Sellers", "title" => "Amount Sellers Earn", "relation fragment" => "", "index" => 0), 
+				array("relation" => "Bidder", "name" => "Bidders", "title" => "Amount Bidders Spend", "relation fragment" => "Bid natural join", "index" => 1)
 			);
 	
 	$userSumCounts = array(array(), array());
@@ -153,10 +161,16 @@ include ("./_header.php");
 									<td><p class="alignleft">Items Sold between Nov-Dec 2001</p></td>
 									<td><strong class="alignright"><?php echo $numSoldItemsRow["ct"]; ?></strong></td>
 								</tr>
-								<tr>
-									<td><p class="alignleft">Users</p></td>
-									<td><strong class="alignright"><?php echo $numUsersRow["ct"]; ?></strong></td>
-								</tr>
+								<?php
+								foreach ($users as $u) {
+								?>
+									<tr>
+										<td><p class="alignleft"><?php echo $u["name"] ?></p></td>
+										<td><strong class="alignright"><?php echo $u["count"]; ?></strong></td>
+									</tr>
+								<?php
+									}
+								?>
 								<tr>
 									<td><p class="alignleft">Average Seller Rating</p></td>
 									<td><strong class="alignright"><?php echo number_format($avgSellerRatingRow["avg"]); ?></strong></td>

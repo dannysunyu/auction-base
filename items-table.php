@@ -122,7 +122,7 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 			   if ($winner == "No bidders")
 				   echo '. No bidders.';
 			   else
-				   echo '. Winner was' . $winner;
+				   echo '. Winner was ' . $winner;
 		   
 		   echo "</td><td>" . money_format('$%i', floatval($row["currently"])) . "</td><td>";
 		   if (floatval($row["buyPrice"]) > 0)

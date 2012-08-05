@@ -8,9 +8,10 @@ try {
 	$itemResult = $db->query($itemQuery);
 	$item = $itemResult->fetch();
 
-	echo '<p><strong>Seller   </strong> <a href="#" rel="tooltip" class="tip" title="Rating: '.$item["rating"].'">'.$item["sellerID"].' </a>';
+	echo '<p><strong>Seller   </strong> <span rel="tooltip" class="tip" style="color: rgb(0, 136, 204); display: inline" title="Rating: '.$item["rating"].'">'.$item["sellerID"].' </span>';
 	echo '<p><strong>Description  </strong> '.$item["description"].'</p>';
 	echo '<p><strong>Location </strong> '.$item["location"].', '.$item["country"].'</p>';
+	echo '<p><strong>Item ID </strong> '.$_REQUEST["itemID"].'</p>';
 	echo '<p><strong>Started on  </strong>'.$item["started"].'</p>';
 	$isBiddingOpen = $_REQUEST["isBiddingOpen"] == "true";
 	$endsTitle = ($isBiddingOpen) ? "Ends on" : "Ended on";

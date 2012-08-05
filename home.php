@@ -23,7 +23,6 @@ include ("./_header.php");
 	                         include ('./filter_form.php');
 	                       ?>
 	                       </form>
-	<div id="query-info"></div>
 	<table class="table table-striped" id="items-table"></table>
 	<div id="search-results"></div>
 </div>

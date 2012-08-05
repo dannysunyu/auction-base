@@ -86,7 +86,7 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 	 if ($openOrClosed == "open")
 		 $conditions[] = 'date_ends > date("' . $selectedTime . '")';
 	 else if ($openOrClosed == "closed") 
-		 $conditions[] = 'date_ends < date("' . $selectedTime . '")';
+		 $conditions[] = 'date_ends <= date("' . $selectedTime . '")';
  }
  
  foreach($conditions as $conditionFragment) {
@@ -119,11 +119,11 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
       while ($row = $result->fetch()) {
           echo "<tr><td>" . $row["itemID"];
            echo "</td><td>" . htmlspecialchars($row["name"]) . "</td><td>";
-           $closed = strtotime($row["date_ends"]) < strtotime(date($selectedTime));
+           $closed = strtotime($row["date_ends"]) <= strtotime(date($selectedTime));
 		   echo ($closed ? "Closed on " : "Will close on ") . $row["date_ends"];
 		   echo "</td><td>" . money_format('$%i', floatval($row["currently"])) . "</td><td>";
 		   try {
-			   $numBidsQuery = "select count(time) as numBids from Bid where itemID =".$row["itemID"]." and time < '".$selectedTime."';";
+			   $numBidsQuery = "select count(time) as numBids from Bid where itemID =".$row["itemID"]." and time <= '".$selectedTime."';";
 			   $numBidsResult = $db->query($numBidsQuery);
 			   $numBidsRow = $numBidsResult->fetch();
 			   $numBids = $numBidsRow["numBids"];

@@ -32,24 +32,23 @@ try {
 ?>
 <div id="history-table"></div>
 <div id="alert-container"></div>
-<script type="text/javascript">
-	$('#history-table').load('history-table.php', { "itemID" : <?php echo $_REQUEST["itemID"] ?>, "numBids" : <?php echo $_REQUEST["numBids"]?>, "selectedTime" : <?php echo "'".$_REQUEST["selectedTime"]."'" ?> });
-</script>
 
 <script type="text/javascript">
+	$(document).ready(function() {
+		$('#history-table').load('history-table.php', { "itemID" : <?php echo $_REQUEST["itemID"] ?>, "numBids" : <?php echo $_REQUEST["numBids"]?>, "selectedTime" : <?php echo "'".$_REQUEST["selectedTime"]."'" ?> });
+    });
+
 	$('#bid-form').live('submit', function(e) {
 		e.preventDefault();
 		//alert('The bid is ' + $('#bid').val());
 		var data = { "itemID" : <?php echo $_REQUEST["itemID"] ?>, "numBids" : <?php echo $_REQUEST["numBids"]?>, "user" : <?php echo "'".$_REQUEST["user"]."'" ?>, "bid" : $('#bid').val(), "selectedTime" : <?php echo "'".$_REQUEST["selectedTime"]."'" ?> }
 		$('#alert-container').load("./post-bid.php", data);
-		$('#history-table').load("./history-table.php", {"itemID" : <?php echo $_REQUEST["itemID"] ?>});
+		$('#history-table').load('history-table.php', { "itemID" : <?php echo $_REQUEST["itemID"] ?>, "selectedTime" : <?php echo "'".$_REQUEST["selectedTime"]."'" ?> });
 		return false;
 	});
-</script>
 
-<script type="text/javascript">
-jQuery( function($) {
-    $("a.tip").tooltip();
-});
+	jQuery( function($) {
+    	$("a.tip").tooltip();
+	});
 </script>
 

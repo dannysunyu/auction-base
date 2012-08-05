@@ -4,8 +4,8 @@
      <th>Name</th>
      <th>Open/Closed</th>
 	 <th>Current Price</th>
+	 <th>Buy Price</th>
 	 <th>Number of Bids</th>
-     <th>Winner</th>
 	 <th>Action</th>
      <th>Category</th>
   </tr>
@@ -42,9 +42,9 @@ function loadModalBody(bidItemID, numBids, isBiddingOpen) {
 </script>
 
 <?php
-function drawBidButton($bidItemID, $bidItemName, $numBids, $isBiddingOpen) {
-	$buttonTitle = ($isBiddingOpen) ? "Bid" : "History";	
-	echo '<a class="btn" data-toggle="modal" href="#bid-modal-'.$bidItemID.'" onclick="loadModalBody('.$bidItemID.', '.$numBids.', '.($isBiddingOpen ? 'true' : 'false').')">'.$buttonTitle.'</a>
+function drawBidButton($bidItemID, $bidItemName, $numBids, $isBiddingClosed) {
+	$buttonTitle = ($isBiddingClosed) ? "History" : "Bid";	
+	echo '<a class="btn" data-toggle="modal" href="#bid-modal-'.$bidItemID.'" onclick="loadModalBody('.$bidItemID.', '.$numBids.', '.($isBiddingClosed ? 'false' : 'true').')">'.$buttonTitle.'</a>
     <div class="modal fade hide" id="bid-modal-'.$bidItemID.'">
 	    <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">×</button>
@@ -70,7 +70,7 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 	$isFirstCondition = False;
 }
 
- $query = "select distinct itemID, name, currently, date(ends) as date_ends from Item";
+ $query = "select distinct itemID, name, currently, buyPrice, date(ends) as date_ends from Item";
  $isFirstCondition = True;
  $needsAnd = False;
  $conditions = array();
@@ -120,8 +120,30 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
           echo "<tr><td>" . $row["itemID"];
            echo "</td><td>" . htmlspecialchars($row["name"]) . "</td><td>";
            $closed = strtotime($row["date_ends"]) <= strtotime(date($selectedTime));
+		  
+		   if ($closed) {
+			   $winnerQuery = "select distinct bidderID from Bid NATURAL JOIN Bidder where itemID=" . $row["itemID"] . 
+				   " and amount = (select max(amount) from Bid where itemID=".$row["itemID"].");";
+			   try {
+				   $winnerResult = $db->query($winnerQuery);
+				   $winnerRow = $winnerResult->fetch();
+				   $winner = $winnerRow["bidderID"];
+				   if (strlen($winner) == 0)
+					   $winner = "No bidders";
+			    } catch (PDOException $e) {
+				        echo "Winner query failed: " . $e->getMessage();
+				}
+			}
+		 
 		   echo ($closed ? "Closed on " : "Will close on ") . $row["date_ends"];
+		   if ($closed)
+			   echo '. Winner was' . $winner;
+		   
 		   echo "</td><td>" . money_format('$%i', floatval($row["currently"])) . "</td><td>";
+		   if (flotval($row["buyPrice"]) > 0)
+			   echo money_format('$%i', floatval($row["buyPrice"]));
+		   echo "</td><td>";
+		   
 		   try {
 			   $numBidsQuery = "select count(time) as numBids from Bid where itemID =".$row["itemID"]." and time <= '".$selectedTime."';";
 			   $numBidsResult = $db->query($numBidsQuery);
@@ -131,26 +153,9 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 		   } catch (PDOException $e) {
 		   	   echo "Num Bids query failed: " . $e->getMessage();
 		   }
-		   if ($closed) {
-			   $winnerQuery = "select distinct bidderID from Bid NATURAL JOIN Bidder where itemID=" . $row["itemID"] . 
-				   " and amount = (select max(amount) from Bid where itemID=".$row["itemID"].");";
-			   try {
-				   $winnerResult = $db->query($winnerQuery);
-				   $winnerRow = $winnerResult->fetch();
-				   $winner = $winnerRow["bidderID"];
-				   if (strlen($winner) > 0)
-						echo $winner ."</td><td>";
-				   else 
-					   echo "No bidders</td><td>";
-			    } catch (PDOException $e) {
-				        echo "Winner query failed: " . $e->getMessage();
-				}
-				drawBidButton($row["itemID"], $row["name"], $numBids, False);
-		   } else {
-			   echo "</td><td>"; // no winner
-			   $bidArray = array();	
-			   drawBidButton($row["itemID"], $row["name"], $numBids, True);
-		   }
+		   
+
+		   drawBidButton($row["itemID"], $row["name"], $numBids, $closed);
 		   echo "</td><td>";
            $categoryQuery = "select distinct category from Category where itemID = " . $row["itemID"];
            $categories = $db->query($categoryQuery);

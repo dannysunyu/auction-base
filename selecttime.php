@@ -12,7 +12,7 @@
 			</div>
 			<div class="span10">
 				<?php 
-				  include ('./navbar.html');
+				  include ('./navbar.php');
 				?>
 
 				<center>

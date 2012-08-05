@@ -16,7 +16,7 @@
 
 	</head>
 	<body>';
-	include ("./navbar.html");
+	include ("./navbar.php");
 	include ("./sqlitedb.php");	
 	echo '<div class="container">
 			<div class="row-fluid">';	

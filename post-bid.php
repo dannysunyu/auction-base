@@ -34,13 +34,13 @@ include ('sqlitedb.php');
 			try {
 				$db->rollBack();
 			} catch (PDOException $pe) {
-				$warnings .= "<p>Couldn't roll back. </p>";
+				$warnings .= "Couldn't roll back.";
 			}
-			$warnings .= "<p>Transaction falied: " . $e->getMessage() . "</p>";
+			$warnings .= "Transaction falied: " . $e->getMessage();
 		}		
 	}
 	else {
-		$warnings .= '<script type="text/javascript"> alert("Your bid of '.money_format('$%i', $bid).' is invalid.") </script>';
+		$warnings .= 'Your bid of '.money_format('$%i', $bid).' is invalid.';
 	} 
-	echo json_encode(array("result" => $result, "bid" => $bid, "warnings" => $warnings));
+	echo json_encode(array("result" => $result, "warnings" => $warnings));
 ?>

@@ -1,9 +1,7 @@
 <?php
 include ('sqlitedb.php');	
 include ('format-time.php');
-?>
 
-<?php
 try {
 	$itemQuery = 'select sellerID, rating, description, Item.location, Item.country, firstBid, started, ends from Item NATURAL JOIN Seller where itemID = '. $_REQUEST["itemID"];	
 	$itemResult = $db->query($itemQuery);
@@ -44,28 +42,38 @@ try {
 
 	$('#bid-form').live('submit', function(e) {
 		e.preventDefault();
-		//alert('The user is ' + <?php echo "'".$_REQUEST["user"]."'" ?>);
-		//alert('The bid is ' + $('#bid').val());
-		/*
-		if (intval(<?php echo $_REQUEST["numBids"]?>) == 0) {
-			$minAmount = 
-		}
+		alert('in the modal, bid is ' + $('#bid').val());
+		var postBidData = { "itemID" : <?php echo $_REQUEST["itemID"] ?>, 
+					"numBids" : <?php echo $_REQUEST["numBids"]?>, 
+					"user" : <?php echo "'".$_REQUEST["user"]."'" ?>, 
+					"bid" : $('#bid').val(), 
+					"selectedTime" : <?php echo "'".$_REQUEST["selectedTime"]."'" ?> };
 		
-		
-		if (floatval($('#bid').val()) > 
-		*/
-			var data = { "itemID" : <?php echo $_REQUEST["itemID"] ?>, "numBids" : <?php echo $_REQUEST["numBids"]?>, "user" : <?php echo "'".$_REQUEST["user"]."'" ?>, "bid" : $('#bid').val(), "selectedTime" : <?php echo "'".$_REQUEST["selectedTime"]."'" ?>, "didBid" : "True" };
-		//$(document).ready(function(){
-			//$('#alert-container').load("post-bid.php", data, function() { alert('Load was performed.'); });
+		alert('about to post-bid');
+		// I would use getJson, but I need an asynchronous request. 						
+		$.ajax({ 
+			url: "post-bid.php",
+			data: postBidData,
+			success: function(ret) {
+				alert("ret is" + ret);
+				var response = $.parseJSON(ret);
+				alert('response is ' + response);
+				alert('result is ' + response.result);
+				alert('warnings are ' + response.warnings);
+				
+	           if (response.result != "success")
+	 			   $('#bid-alert').html('<div class="alert alert-error">An error occurred. The bid was not properly inserted into the database.' + response.warnings + '</div>');
+			   },
+			async: false
+		});
+		 
+		alert('about to get the history table.');
+		var historyTableData = 	{ "itemID" : <?php echo $_REQUEST["itemID"] ?>, 
+					"user" : <?php echo "'".$_REQUEST["user"]."'" ?>, 
+					"selectedTime" : <?php echo "'".$_REQUEST["selectedTime"]."'" ?>, 
+					"didBid" : "True" };
 
-		    $.getJSON("post-bid.php", data, function(response){
-	               if (response["result"] == "success")
-					   $('#bid-alert').html('<div class="alert alert-success">You are now the top bidder.</div>');
-				   else
-					   $('#bid-alert').html('<div class="alert alert-error">An error occurred. The bid was not properly inserted into the database.</div>');
-	           });
-
-			$('#history-table').load('history-table.php', data); //{ "itemID" : <?php echo $_REQUEST["itemID"] ?>, "selectedTime" : <?php echo "'".$_REQUEST["selectedTime"]."'" ?> });
+		$('#history-table').load('history-table.php', historyTableData);
 		return false;
 	});
 

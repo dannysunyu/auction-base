@@ -14,10 +14,6 @@
 </style>
 
 <div class="span12">
-    <form class="well form-search search-form" id="term-search-form">
-		<input type="text" name="searchTerms" class="input-medium search-query"></input>
-		<button type="submit" class="btn">Search</button>
-    </form>
 	
 	  <?php
 	    $MM = $_POST["MM"];
@@ -33,28 +29,27 @@
 	    }
 	    echo "<br/>";
 	  ?>
-
-	  <button class="btn" type="submit" id="advanced-search-btn">
-		  Advanced Search
-	  </button>
 	  <div id="padding"></div>
 	  <span id="spinner-container"></span>
 	  <br/>
 	  <br/>
+	  
+      <form class="well form-search search-form" id="term-search-form">
+       	<?php include ('search_form.php'); ?>
+      </form>
+	  
+	  <button class="btn" type="submit" id="advanced-search-btn">
+	  		  Advanced Search
+  	  </button>
+	  
 	  <form class="well form-inline search-form" id="filter-form" action="#" method="get">
-	                       <?php
-	                         include ('filter_form.php');
-	                       ?>
-	                       </form>
+	       <?php include ('filter_form.php'); ?>
+	 </form>
 	<table class="table table-bordered table-striped" style="background-color: white" id="items-table"></table>
 	<div id="search-results"></div>
 </div>
 			
 <script type="text/javascript">
-	$('document').ready(function() {
-		//var spinner = new Spinner().spin($('#term-search-form'));
-//		alert('spinner is ' + spinner);
-	});
 	
 	$('.search-form').submit(function() {
 		spinner = new Spinner().spin(document.getElementById('spinner-container'));

@@ -107,7 +107,8 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 	 if (!$first) {
 		 $searchTermCondition .= ')';
 	 }
-	 $conditions[] = $searchTermCondition;
+	 if (strlen($searchTermCondition) > 0)
+		 $conditions[] = $searchTermCondition;
  }
  
  foreach($conditions as $conditionFragment) {

@@ -42,32 +42,24 @@ try {
 
 	$('#bid-form').live('submit', function(e) {
 		e.preventDefault();
-		alert('in the modal, bid is ' + $('#bid').val());
 		var postBidData = { "itemID" : <?php echo $_REQUEST["itemID"] ?>, 
 					"numBids" : <?php echo $_REQUEST["numBids"]?>, 
 					"user" : <?php echo "'".$_REQUEST["user"]."'" ?>, 
 					"bid" : $('#bid').val(), 
 					"selectedTime" : <?php echo "'".$_REQUEST["selectedTime"]."'" ?> };
 		
-		alert('about to post-bid');
 		// I would use getJson, but I need an asynchronous request. 						
 		$.ajax({ 
 			url: "post-bid.php",
 			data: postBidData,
 			success: function(ret) {
-				alert("ret is" + ret);
-				var response = $.parseJSON(ret);
-				alert('response is ' + response);
-				alert('result is ' + response.result);
-				alert('warnings are ' + response.warnings);
-				
+				var response = $.parseJSON(ret);				
 	           if (response.result != "success")
 	 			   $('#bid-alert').html('<div class="alert alert-error">An error occurred. The bid was not properly inserted into the database.' + response.warnings + '</div>');
 			   },
 			async: false
 		});
 		 
-		alert('about to get the history table.');
 		var historyTableData = 	{ "itemID" : <?php echo $_REQUEST["itemID"] ?>, 
 					"user" : <?php echo "'".$_REQUEST["user"]."'" ?>, 
 					"selectedTime" : <?php echo "'".$_REQUEST["selectedTime"]."'" ?>, 

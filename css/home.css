@@ -19,3 +19,7 @@ body .modal {
 .modal-body {
 /*    max-height: 800px; */
 }
+
+#filter-form {
+    display: none;
+}

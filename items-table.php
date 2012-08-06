@@ -29,6 +29,11 @@ include ('format-time.php');
 	$selectedItemID = intval($_POST["itemID"]);
 	$selectedCategory = $_POST["category"];
 	$selectedTime = $yyyy."-".$MM."-".$dd." ".$HH.":".$mm.":".$ss;
+	if (strlen(htmlspecialchars($_POST["searchTerms"])) > 0) 
+		$searchTerms = explode(" ", $_POST["searchTerms"]);
+	else
+		$searchTerms = array();
+	echo 'Search terms are ' . implode(", ", $searchTerms);
 ?>
 
 <script type="text/javascript">
@@ -77,7 +82,7 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
  if (strlen($_POST['itemID']) > 0)
 	 $conditions[] = "Item.itemID = " . intval($_POST['itemID']);
  else {
-	 if ($selectedCategory != "All Categories") 
+	 if ($selectedCategory != "All Categories" && strlen($selectedCategory) > 0) 
 		 $conditions[] = "itemID in (select itemID from Category where category='" . $selectedCategory . "')";
 	 if ($maxPrice > 0) 
 		 $conditions[] = "Item.currently =< " . $maxPrice;
@@ -87,6 +92,22 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 		 $conditions[] = 'ends > "' . $selectedTime . '")';
 	 else if ($openOrClosed == "closed") 
 		 $conditions[] = 'ends <= "' . $selectedTime . '")';
+	 $searchTermCondition = "";
+	 $first = True;
+	 foreach ($searchTerms as $searchTerm) {
+		 if ($first) {
+			 $first = False;
+			 $searchTermCondition .= '(';
+		 }
+		 else {
+			 $searchTermCondition .= ' or ';
+		 }
+		 $searchTermCondition .= 'name like "%'.$searchTerm.'%" or location like "%'.$searchTerm.'%" or country like "%'.$searchTerm.'%" or description like "%'.$searchTerm.'%"';
+	 }
+	 if (!$first) {
+		 $searchTermCondition .= ')';
+	 }
+	 $conditions[] = $searchTermCondition;
  }
  
  foreach($conditions as $conditionFragment) {
@@ -95,9 +116,9 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
  
  $condition .= ";";
  $query .= $condition;
+ echo '<p style="font-size:300%">Query is: '.$query;
  
  /* Query info */
-	 
  try {
       $result = $db->query($query);
       while ($row = $result->fetch()) {
@@ -157,7 +178,6 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
  } catch (PDOException $e) {
       echo "Item query failed: " . $e->getMessage();
  }
- 
- 
+
 ?>
 

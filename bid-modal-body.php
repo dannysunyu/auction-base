@@ -33,7 +33,7 @@ try {
 }
 ?>
 
-<div id="top-bidder-alert"></div>
+<div id="bid-alert"></div>
 <div id="history-table"></div>
 <div id="alert-container"></div>
 
@@ -58,17 +58,13 @@ try {
 		//$(document).ready(function(){
 			//$('#alert-container').load("post-bid.php", data, function() { alert('Load was performed.'); });
 
-		    $.getJSON("post-bid.php", function(data){
-	               if (data["result"] == "success") {
-	                   alert("Congratulations! You are now the top bidder at " + data["bid"]);
-	               }
-				   else {
-					   alert("failz");
-				   		$('#alert-container').html(data["warnings"]);
-					}
+		    $.getJSON("post-bid.php", data, function(response){
+	               if (response["result"] == "success")
+					   $('#bid-alert').html('<div class="alert alert-success">You are now the top bidder.</div>');
+				   else
+					   $('#bid-alert').html('<div class="alert alert-error">An error occurred. The bid was not properly inserted into the database.</div>');
 	           });
 
-			//}
 			$('#history-table').load('history-table.php', data); //{ "itemID" : <?php echo $_REQUEST["itemID"] ?>, "selectedTime" : <?php echo "'".$_REQUEST["selectedTime"]."'" ?> });
 		return false;
 	});

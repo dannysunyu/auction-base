@@ -3,7 +3,7 @@ include ('sqlitedb.php');
 include ('format-time.php');
 
 try {
-	$query = 'select bidderID, date(time) as dateTime, time, amount, rating from Bid NATURAL JOIN Bidder where itemID = '.$_REQUEST["itemID"].' and dateTime <= "'. $_REQUEST["selectedTime"] .'" order by amount desc';
+	$query = 'select bidderID, time, amount, rating from Bid NATURAL JOIN Bidder where itemID = '.$_REQUEST["itemID"].' and time <= "'. $_REQUEST["selectedTime"] .'" order by amount desc';
 	$result = $db->query($query);
 	$firstTime = True;
 	$topBidder = False;

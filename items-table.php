@@ -29,10 +29,6 @@
 	$selectedItemID = intval($_POST["itemID"]);
 	$selectedCategory = $_POST["category"];
 	$selectedTime = $yyyy."-".$MM."-".$dd." ".$HH.":".$mm.":".$ss;
-	echo "post";
-	echo $_POST["searchTerms"];
-	echo "get";
-	echo $_GET["searchTerms"];
 	if (strlen(htmlspecialchars($_POST["searchTerms"])) > 0) 
 		$searchTerms = explode(" ", $_POST["searchTerms"]);
 	else
@@ -41,19 +37,19 @@
 ?>
 
 <script type="text/javascript">
-function loadModalBody(bidItemID, numBids, firstBid, isBiddingOpen) {
-	$('#bid-' + bidItemID + '-modal-body').load('bid-modal-body.php', { "itemID" : bidItemID, "numBids" : numBids, "firstBid" : firstBid, "user" : <?php echo '"'.$user.'"'?>, "isBiddingOpen": isBiddingOpen, "selectedTime" : <?php echo "'".$selectedTime."'" ?> });
+function loadModalBody(bidItemID, numBids, firstBid, isBiddingOpen, currentPrice) {
+	$('#bid-' + bidItemID + '-modal-body').load('bid-modal-body.php', { "itemID" : bidItemID, "numBids" : numBids, "firstBid" : firstBid, "user" : <?php echo '"'.$user.'"'?>, "isBiddingOpen": isBiddingOpen, "selectedTime" : <?php echo "'".$selectedTime."'" ?>, "currentPrice" : currentPrice});
 }
 </script>
 
 
 <?php
-function drawBidButton($bidItemID, $bidItemName, $numBids, $firstBid, $isBiddingClosed) {
+function drawBidButton($bidItemID, $bidItemName, $numBids, $firstBid, $isBiddingClosed, $currentPrice) {
 	$buttonTitle = ($isBiddingClosed) ? "History" : "Bid";	
 	$buttonClass = ($isBiddingClosed) ? "btn" : "btn btn-primary";
 	echo '<div id="wrapper" style="display:table">';
 	echo '<div class="button-cell" style="display:table-cell; vertical-align:middle">';
-	echo '<a class="'.$buttonClass.'" data-toggle="modal" href="#bid-modal-'.$bidItemID.'" onclick="loadModalBody('.$bidItemID.', '.$numBids.', '.$firstBid.' , '.($isBiddingClosed ? 'false' : 'true').')">'.$buttonTitle.'</a>
+	echo '<a class="'.$buttonClass.'" data-toggle="modal" href="#bid-modal-'.$bidItemID.'" onclick="loadModalBody('.$bidItemID.', '.$numBids.', '.$firstBid.' , '.($isBiddingClosed ? 'false' : 'true').', '.$currentPrice.')">'.$buttonTitle.'</a>
     <div class="modal fade hide" id="bid-modal-'.$bidItemID.'">
 	    <div class="modal-header">
 		    <button type="button" class="close done-btn" data-dismiss="modal">×</button>
@@ -79,7 +75,7 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 	$isFirstCondition = False;
 }
 
- $query = "select distinct itemID, name, currently, firstBid, buyPrice, ends from Item";
+ $query = "select distinct itemID, name, firstBid, buyPrice, ends from Item";
  $isFirstCondition = True;
  $needsAnd = False;
  $conditions = array();
@@ -127,7 +123,15 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
  try {
       $result = $db->query($query);
       while ($row = $result->fetch()) {
-           echo "<tr></td><td>" . htmlspecialchars($row["name"]) . "</td><td>";
+        
+	  /* Current price is not the same as the "currently" attribute, because we can travel through time. */
+	  	$currentPriceQuery = "select max(amount) as maxAmount from Bid where itemID = ".$row["itemID"]." and time <= '".$selectedTime."'";
+	  	$currentPriceResult = $db->query($currentPriceQuery);
+	  	$currentPriceRow = $currentPriceResult->fetch();
+	  	$currentPrice = $currentPriceRow["maxAmount"];
+	  	$currentPrice = floatval($currentPrice);
+		   
+		   echo "<tr></td><td>" . htmlspecialchars($row["name"]) . "</td><td>";
            $closed = strtotime($row["ends"]) <= strtotime($selectedTime);
 		  
 		   if ($closed) {
@@ -150,8 +154,8 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 				   echo '. No bidders.';
 			   else
 				   echo '. Winner was ' . $winner;
-		   
-		   echo "</td><td>" . money_format('$%i', floatval($row["currently"])) . "</td><td>";
+
+		   echo "</td><td>" . money_format('$%i', $currentPrice) . "</td><td>";
 		   if (floatval($row["buyPrice"]) > 0)
 			   echo money_format('$%i', floatval($row["buyPrice"]));
 		   echo "</td><td>";
@@ -166,7 +170,7 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 		   	   echo "Num Bids query failed: " . $e->getMessage();
 		   }
 		   
-		   drawBidButton($row["itemID"], $row["name"], $numBids, $row["firstBid"],  $closed);
+		   drawBidButton($row["itemID"], $row["name"], $numBids, $row["firstBid"], $closed, $currentPrice);
 		   echo "</td><td>";
            $categoryQuery = "select distinct category from Category where itemID = " . $row["itemID"];
            $categories = $db->query($categoryQuery);
@@ -181,7 +185,7 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
            echo "" . $categoriesString . "</td></tr>";
       }
  } catch (PDOException $e) {
-      echo "Item query failed: " . $e->getMessage();
+      echo "Item query or current price query failed: " . $e->getMessage();
  }
 ?>
 

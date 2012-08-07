@@ -3,22 +3,22 @@
 ?>
 
 <style type="text/css">
-    #spinner-container-t {
+    #spinner-container2 {
 	  position: fixed;
 	  top: 50%;
 	  left: 50%;
       color: black;
       width: 50px;
       height: 50px;
-	  background: red;
     }
 </style>
 
+<div id="spinner-container2"></div>
 <div id="stats"></div>
 
 <script type="text/javascript">
 	$('document').ready(function() {
-		spinner2 = new Spinner().spin(document.getElementById('spinner-container-t'));
+		spinner2 = new Spinner().spin(document.getElementById('spinner-container2'));
 		$('#stats').load("stats.php", function() {spinner2.stop();});
 	});
 </script>

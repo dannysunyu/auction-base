@@ -6,6 +6,10 @@ try {
 	$itemQuery = 'select sellerID, rating, description, Item.location, Item.country, firstBid, started, ends from Item NATURAL JOIN Seller where itemID = '. $_REQUEST["itemID"];	
 	$itemResult = $db->query($itemQuery);
 	$item = $itemResult->fetch();
+} catch (PDOException $e) {
+	echo "Bid item query failed: " . $e->getMessage();
+}
+echo '<div style="width:46%; float:left; padding:15px;">';
 
 	echo '<p><strong>Seller   </strong> <span rel="tooltip" class="tip" style="color: rgb(0, 136, 204); display: inline" title="Rating: '.$item["rating"].'">'.$item["sellerID"].' </span>';
 	echo '<p><strong>Description  </strong> '.$item["description"].'</p>';
@@ -15,25 +19,23 @@ try {
 	$isBiddingOpen = $_REQUEST["isBiddingOpen"] == "true";
 	$endsTitle = ($isBiddingOpen) ? "Ends " : "Ended ";
 	echo '<p><strong>'.$endsTitle.'  </strong>'.FormatTime($item["ends"], $_REQUEST["selectedTime"]).'</p>';
-	if ($isBiddingOpen) {
+	if ($isBiddingOpen)
 		echo '<p><strong>Starting Bid </strong>'.money_format('$%i', floatval($item["firstBid"])).'</p>';
-		echo '<form class="well form-inline" id="bid-form" action="#" method="post">
-			<span class="input-prepend input-append"><span class="add-on">$</span><input name="bid" id="bid" class="span2" type="text" size="80" placeholder="Your Bid" /><span class="add-on">.00</span>&nbsp;&nbsp;&nbsp;&nbsp;
-	    <button type="submit" class="btn">Bid Now</button>
-		</span>
-	    </form>';
-	}
-	else {
+	else
 		echo '<p>Bidding is closed. </p>';
-	}
-} catch (PDOException $e) {
-	echo "Bid item query failed: " . $e->getMessage();
-}
 ?>
+</div>
+<div style="width:47%; float:right; padding:15px;">
+	<form class="well form-inline" id="bid-form" action="#" method="post">
+		<span class="input-prepend input-append"><span class="add-on">$</span><input name="bid" id="bid" class="span2" type="text" size="160" placeholder="Bid" /><span class="add-on">.00</span>&nbsp;&nbsp;&nbsp;&nbsp;
+			<button type="submit" class="btn">Bid Now</button>
+		</span>
+    </form>
 
 <div id="bid-alert"></div>
 <div id="history-table"></div>
 <div id="alert-container"></div>
+</div>
 
 <script type="text/javascript">
 	$(document).ready(function() {

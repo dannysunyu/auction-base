@@ -11,8 +11,8 @@
 </thead>
 
 <?php
-include ('sqlitedb.php');	
-include ('format-time.php');
+	include ('sqlitedb.php');	
+	include ('format-time.php');
 ?>
 
 <?php
@@ -29,6 +29,10 @@ include ('format-time.php');
 	$selectedItemID = intval($_POST["itemID"]);
 	$selectedCategory = $_POST["category"];
 	$selectedTime = $yyyy."-".$MM."-".$dd." ".$HH.":".$mm.":".$ss;
+	echo "post";
+	echo $_POST["searchTerms"];
+	echo "get";
+	echo $_GET["searchTerms"];
 	if (strlen(htmlspecialchars($_POST["searchTerms"])) > 0) 
 		$searchTerms = explode(" ", $_POST["searchTerms"]);
 	else
@@ -104,20 +108,20 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 		 }
 		 $searchTermCondition .= 'name like "%'.$searchTerm.'%" or location like "%'.$searchTerm.'%" or country like "%'.$searchTerm.'%" or description like "%'.$searchTerm.'%"';
 	 }
+	 
 	 if (!$first) {
 		 $searchTermCondition .= ')';
 	 }
 	 if (strlen($searchTermCondition) > 0)
-		 $conditions[] = $searchTermCondition;
+		 $conditions[] = $searchTermCondition; 
  }
  
  foreach($conditions as $conditionFragment) {
 	 addCondition($condition, $conditionFragment, $needsAnd, $isFirstCondition);
- }
+ }	 
  
  $condition .= ";";
  $query .= $condition;
- echo '<p style="font-size:300%">Query is: '.$query;
  
  /* Query info */
  try {
@@ -179,6 +183,5 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
  } catch (PDOException $e) {
       echo "Item query failed: " . $e->getMessage();
  }
-
 ?>
 

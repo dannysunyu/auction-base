@@ -41,7 +41,8 @@
 	  <button class="btn" type="submit" id="advanced-search-btn">
 	  		  Advanced Search
   	  </button>
-	  
+	  <br />
+	  <br />
 	  <form class="well form-inline search-form" id="filter-form" action="#" method="get">
 	       <?php include ('filter_form.php'); ?>
 	 </form>
@@ -53,8 +54,12 @@
 	
 	$('.search-form').submit(function() {
 		spinner = new Spinner().spin(document.getElementById('spinner-container'));
-		var data = $(this).serializeArray();
-		$('#items-table').load("items-table.php", data, function() {spinner.stop();});
+		if ($('#filter-form').is(':hidden')) {
+			var data = $('#term-search-form').serializeArray();
+		} else {
+			var data = $('#term-search-form, #filter-form').serializeArray();
+		}
+		$('#items-table').load("items-table.php", data, function() { spinner.stop(); });
 		return false;
 	});
 

@@ -10,6 +10,7 @@
       color: black;
       width: 50px;
       height: 50px;
+	  background: red;
     }
 </style>
 
@@ -18,8 +19,6 @@
 <script type="text/javascript">
 	$('document').ready(function() {
 		spinner2 = new Spinner().spin(document.getElementById('spinner-container-t'));
-		
-		alert('spinner2 is ' + spinner2);
 		$('#stats').load("stats.php", function() {spinner2.stop();});
 	});
 </script>

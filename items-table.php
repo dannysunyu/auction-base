@@ -89,9 +89,9 @@ function addCondition(&$oldCondition, &$newConditionFragment, &$needsAnd, &$isFi
 	 if ($minPrice > 0)
 		 $conditions[] = "Item.currently >= " . $minPrice;
 	 if ($openOrClosed == "open")
-		 $conditions[] = 'ends > "' . $selectedTime . '")';
+		 $conditions[] = 'ends > "' . $selectedTime . '"';
 	 else if ($openOrClosed == "closed") 
-		 $conditions[] = 'ends <= "' . $selectedTime . '")';
+		 $conditions[] = 'ends <= "' . $selectedTime . '"';
 	 $searchTermCondition = "";
 	 $first = True;
 	 foreach ($searchTerms as $searchTerm) {

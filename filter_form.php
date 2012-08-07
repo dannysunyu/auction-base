@@ -1,5 +1,5 @@
 <?php 
-	  include ('./sqlitedb.php');	
+	  include ('sqlitedb.php');	
 ?>
 
 <table>

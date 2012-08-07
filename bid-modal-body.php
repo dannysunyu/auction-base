@@ -13,8 +13,8 @@ echo '<div style="width:46%; float:left; padding:15px;">';
 
 	echo '<p><strong>Seller   </strong> <span rel="tooltip" class="tip" style="color: rgb(0, 136, 204); display: inline" title="Rating: '.$item["rating"].'">'.$item["sellerID"].' </span>';
 	echo '<p><strong>Description  </strong> '.$item["description"].'</p>';
-	echo '<p><strong>Location </strong> '.$item["location"].', '.$item["country"].'</p>';
-	echo '<p><strong>Item ID </strong> '.$_POST["itemID"].'</p>';
+	echo '<p><strong>Location </strong> '.htmlspecialchars($item["location"]).', '.htmlspecialchars($item["country"]).'</p>';
+	echo '<p><strong>Item ID </strong> '.htmlspecialchars($_POST["itemID"]).'</p>';
 	echo '<p><strong>Started   </strong>'.FormatTime($item["started"], $_POST["selectedTime"]).'</p>';
 	$isBiddingOpen = $_POST["isBiddingOpen"] == "true";
 	$endsTitle = ($isBiddingOpen) ? "Ends " : "Ended ";
@@ -39,14 +39,14 @@ echo '<div style="width:46%; float:left; padding:15px;">';
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$('#history-table').load('history-table.php', { "itemID" : <?php echo $_POST["itemID"] ?>, "numBids" : <?php echo $_POST["numBids"]?>, "selectedTime" : <?php echo "'".$_POST["selectedTime"]."'" ?>, "user" : <?php echo "'".$_POST["user"]."'" ?> , "firstBid" : (<?php echo intval($_POST["firstBid"]) ?>) });
+		$('#history-table').load('history-table.php', { "itemID" : <?php echo $_POST["itemID"] ?>, "numBids" : <?php echo $_POST["numBids"]?>, "selectedTime" : <?php echo "'".$_POST["selectedTime"]."'" ?>, "user" : <?php echo "'".htmlspecialchars($_POST["user"])."'" ?> , "firstBid" : (<?php echo intval($_POST["firstBid"]) ?>) });
     });
 
 	$('#bid-form').live('submit', function(e) {
 		e.preventDefault();
 		var postBidData = { "itemID" : <?php echo $_POST["itemID"] ?>, 
 					"numBids" : <?php echo $_POST["numBids"]?>, 
-					"user" : <?php echo "'".$_POST["user"]."'" ?>, 
+					"user" : <?php echo "'".htmlspecialchars($_POST["user"])."'" ?>, 
 					"bid" : $('#bid').val(), 
 					"currentPrice" : <?php echo $_POST["currentPrice"]?>,
 					"selectedTime" : <?php echo "'".$_POST["selectedTime"]."'" ?> };
@@ -69,7 +69,7 @@ echo '<div style="width:46%; float:left; padding:15px;">';
 		});
 		 
 		var historyTableData = 	{ "itemID" : <?php echo $_POST["itemID"] ?>, 
-					"user" : <?php echo "'".$_POST["user"]."'" ?>, 
+					"user" : <?php echo "'".htmlspecialchars($_POST["user"])."'" ?>, 
 					"selectedTime" : <?php echo "'".$_POST["selectedTime"]."'" ?>, 
 					"didBid" : "True" };
 

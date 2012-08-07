@@ -13,6 +13,17 @@ body {
 body .modal {
     width: 1000px;
     left:33%;
+	/* could also do this:
+	
+	function setSizes() {
+	   var containerHeight = $("#listContainer").height();
+	   $("#myList").height(containerHeight - 18);
+	}
+
+	then I bind the window resize to recalc it whenever the browser window is resized (if container's size changed with window resize)
+
+	$(window).resize(function() { setSizes(); });
+	
 /*    top:33%; */
 }
 
@@ -32,3 +43,16 @@ body .modal {
 	top:50%;
 	left:50%;
 }
+
+/*
+#page-container {
+	position: relative;
+	background: red;
+	min-height:100%;
+	width: 837px;
+	margin: 0px, auto;
+	padding-top: 54px;
+	padding-left:14px;
+	padding-right:15px;
+}
+*/

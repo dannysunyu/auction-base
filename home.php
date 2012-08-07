@@ -53,7 +53,11 @@
 <script type="text/javascript">
 	
 	$('.search-form').submit(function() {
-		spinner = new Spinner().spin(document.getElementById('spinner-container'));
+		var spinner;
+		if (spinner)
+			spinner.spin();
+		else
+			spinner = new Spinner().spin(document.getElementById('spinner-container'));
 		if ($('#filter-form').is(':hidden')) {
 			var data = $('#term-search-form').serializeArray();
 		} else {
